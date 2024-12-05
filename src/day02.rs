@@ -38,11 +38,17 @@ fn read_file() -> Vec<Vec<i64>> {
 }
 
 
-fn is_increasing<'a>(fi: impl IntoIterator<Item=&'a i64>, se: impl IntoIterator<Item=&'a i64>) -> bool {
-    return fi.into_iter().zip(se.into_iter()).all(|(sml, big)| sml < big && (big - sml < 4));
+fn is_increasing<'a>(fi: impl Iterator<Item=&'a i64>, se: impl Iterator<Item=&'a i64>) -> bool {
+    return fi.zip(se).all(|(sml, big)| sml < big && (big - sml < 4));
 }
 
 fn is_report_safe(nums: &Vec<i64>) -> bool {
+    let hoho: Iterator<Item=i64> = if true {
+        nums.iter().rev()
+    } else {
+        nums.iter()
+    };
+
     if nums[0] > nums[1] {
         return is_increasing(nums.iter().rev(), nums.iter().rev().skip(1));
     }
