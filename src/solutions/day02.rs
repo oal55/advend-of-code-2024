@@ -2,17 +2,17 @@ use std::io::BufRead;
 
 use crate::common::file_reader;
 
-pub fn run() -> (i64, i64) { (part1(), part2()) }
+pub fn run(file_path: &str) -> (i64, i64) { (part1(file_path), part2(file_path)) }
 
-fn part1() -> i64 {
-    return read_file()
+fn part1(file_path: &str) -> i64 {
+    return read_file(file_path)
         .iter()
         .filter(|&report| is_report_safe(&report))
         .count() as i64;
 }
 
-fn part2() -> i64 {
-    return read_file()
+fn part2(file_path: &str) -> i64 {
+    return read_file(file_path)
         .iter()
         .filter(|&report| {
             return is_report_safe(report) || (0..report.len()).any(|i| {
@@ -24,9 +24,9 @@ fn part2() -> i64 {
         .count() as i64;
 }
 
-fn read_file() -> Vec<Vec<i64>> {
+fn read_file(file_path: &str) -> Vec<Vec<i64>> {
     let mut lines: Vec<Vec<i64>> = Vec::new();
-    let reader = file_reader(2);
+    let reader = file_reader(file_path);
     for line in reader.lines() {
         let report_numbers: Vec<i64> = line.unwrap()
             .split_ascii_whitespace()
@@ -43,12 +43,6 @@ fn is_increasing<'a>(fi: impl Iterator<Item=&'a i64>, se: impl Iterator<Item=&'a
 }
 
 fn is_report_safe(nums: &Vec<i64>) -> bool {
-    let hoho: Iterator<Item=i64> = if true {
-        nums.iter().rev()
-    } else {
-        nums.iter()
-    };
-
     if nums[0] > nums[1] {
         return is_increasing(nums.iter().rev(), nums.iter().rev().skip(1));
     }

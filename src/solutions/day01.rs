@@ -2,10 +2,10 @@ use std::{io::BufRead, collections::HashMap};
 
 use crate::common::file_reader;
 
-pub fn run() -> (i64, i64) { (part1(), part2()) }
+pub fn run(file_path: &str) -> (i64, i64) { (part1(file_path), part2(file_path)) }
 
-fn part1() -> i64 {
-    let reader = file_reader(1);
+fn part1(file_path: &str) -> i64 {
+    let reader = file_reader(file_path);
     let mut nums_p: Vec<i64> = Vec::new();
     let mut nums_q: Vec<i64> = Vec::new();
 
@@ -28,8 +28,8 @@ fn part1() -> i64 {
     return nums_p.iter().zip(nums_q.iter()).map(|(p, q)| (p - q).abs()).sum();
 }
 
-fn part2() -> i64 {
-    let reader = file_reader(1);
+fn part2(file_path: &str) -> i64 {
+    let reader = file_reader(file_path);
     let mut nums_p: Vec<i64> = Vec::new();
     let mut freq: HashMap<i64, i64> = HashMap::new();
 
