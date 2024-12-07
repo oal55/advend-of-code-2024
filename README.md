@@ -9,7 +9,7 @@ Notes etc
 - How do ovnership / copying shenanigans work for function return values?
 
 ## Add
-- Something that downloads input files if they're not already saved
-- The run function in main should probably be able to consume generic "runnable" functions (as upcoming days' results could have different types).
-- Some sort of testing
-- Ability to consume custom input files (instead of run functions opinionatedly reading dayXX.txt files)
+- [ ] Something that downloads input files if they're not already saved
+- [x] The run function in main should probably be able to consume generic "runnable" functions (as upcoming days' results could have different types).
+- [ ] Some sort of testing
+- [x] Ability to consume custom input files (instead of run functions opinionatedly reading dayXX.txt files)
