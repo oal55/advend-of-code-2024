@@ -13,6 +13,7 @@ fn main() {
         "2" => run(&input_file_path, solutions::run_day02),
         "3" => run(&input_file_path, solutions::run_day03),
         "4" => run(&input_file_path, solutions::run_day04),
+        "5" => run(&input_file_path, solutions::run_day05),
         _ => panic!("Bad argument")
     }
 }
