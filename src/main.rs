@@ -11,6 +11,7 @@ fn main() {
     match args[1].as_str() {
         "1" => run(&input_file_path, solutions::run_day01),
         "2" => run(&input_file_path, solutions::run_day02),
+        "3" => run(&input_file_path, solutions::run_day03),
         _ => panic!("Bad argument")
     }
 }
