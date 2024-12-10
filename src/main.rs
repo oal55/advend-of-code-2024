@@ -57,6 +57,6 @@ fn ensure_aoc_input_exists(day: u32) {
         .header("cookie", format!("session={session_id}"))
         .send()
         .expect("Expected better things from reqwest");
-    let contents = response.text().expect("Cannot read response text"); // Get the response text
+    let contents = response.text().expect("Cannot read response text");
     fs::write(relative_filepath, &contents).expect("Cannot write file.");
 }
