@@ -1,7 +1,8 @@
 /target
 
-# custom tests
+# input files
 test.in
+/input-files/*
 
 # constants and things
 .env
