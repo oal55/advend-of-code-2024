@@ -1,27 +1,59 @@
-use std::{collections::HashSet, io::BufRead};
+use std::{collections::HashMap, io::BufRead};
 use crate::common::file_reader;
 
 pub fn run(file_path: &str) -> (i64, i64) {
-    let mut chars: Vec<Vec<char>> = file_reader(file_path).lines().into_iter()
+    let chars: Vec<Vec<char>> = file_reader(file_path).lines().into_iter()
         .map(|line| line.unwrap().chars().collect())
         .collect();
     let start = find_starting_point(&chars);
-    chars[start.i as usize][start.j as usize] = '.';
     let grid = Grid::new(&chars);
-    
-    (part1(&grid, &start), part2(file_path)) }
 
-fn part1(grid: &Grid, start: &Point) -> i64 {
+    let seen_points = walk_out_of_grid(&grid, &start);
+
+    let mut num_loops = 0;
+    for (point, _) in &seen_points {
+        if has_loop(&grid, &start, point) {
+            num_loops += 1;
+        }
+    }
+    
+    return (seen_points.len() as i64, num_loops)
+}
+
+fn has_loop(grid: &Grid, start: &Point, extra: &Point) -> bool {
     let mut direction = Point{i:-1, j:0};
     let mut cur = start.clone();
 
-    let mut seen_points: HashSet<Point> = HashSet::new();
-    
+    let mut steps = 0;
     loop {
-        seen_points.insert(cur);
+        steps += 1;
+        if steps == 67605 {
+            return true;
+        }
         let maybe_next = cur.step(&direction);
         if !grid.inside(&maybe_next) {
-            return seen_points.len() as i64;
+            return false;
+        }
+        if grid.get(&maybe_next) == '#' || maybe_next == *extra {
+            direction.rotate_clockwise();
+        } else {
+            cur = maybe_next;
+        }
+    }
+}
+
+fn walk_out_of_grid(grid: &Grid, start: &Point) -> HashMap<Point, Point> {
+    let mut direction = Point{i:-1, j:0};
+    let mut cur = start.clone();
+
+    let mut seen_points: HashMap<Point, Point> = HashMap::new(); // coord -> dir
+
+    loop {
+        seen_points.insert(cur.clone(), direction.clone()); // this clone necessary?
+        
+        let maybe_next = cur.step(&direction);
+        if !grid.inside(&maybe_next) {
+            return seen_points;
         }
         if grid.get(&maybe_next) == '#' {
             direction.rotate_clockwise();
@@ -31,7 +63,6 @@ fn part1(grid: &Grid, start: &Point) -> i64 {
     }
 }
 
-fn part2(_ile_path: &str) -> i64 { 0 }
 
 fn find_starting_point(chars: &Vec<Vec<char>>) -> Point {
     for i in 0..chars.len() {
