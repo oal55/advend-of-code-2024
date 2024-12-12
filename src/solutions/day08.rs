@@ -47,7 +47,6 @@ fn part2(field: &Field) -> i64 {
     return unique_points.len() as i64;
 }
 
-
 struct Combinations {
     maxn: usize,
     i: usize,
@@ -73,8 +72,6 @@ impl Iterator for Combinations {
         return Some((self.i, self.j));
     }
 }
-
-
 
 struct Field {
     antennas: HashMap<char, Vec<Point>>,
