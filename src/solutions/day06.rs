@@ -1,5 +1,5 @@
 use std::{collections::HashMap, io::BufRead};
-use crate::common::file_reader;
+use crate::common::{file_reader, Point};
 
 pub fn run(file_path: &str) -> (i64, i64) {
     let chars: Vec<Vec<char>> = file_reader(file_path).lines().into_iter()
@@ -73,15 +73,6 @@ fn find_starting_point(chars: &Vec<Vec<char>>) -> Point {
         }
     }
     panic!("No starting point");
-}
-
-#[derive(Clone, Copy, PartialEq, Eq, Hash)]
-struct Point { i: i32, j: i32 }
-
-impl Point {
-    // maybe ensure unit vector?
-    fn rotate_clockwise(&mut self) { (self.i, self.j) = (self.j, -self.i); }
-    fn step(&self, unit_vec: &Point) ->Point { Point{i: self.i + unit_vec.i, j: self.j + unit_vec.j} }
 }
 
 struct Grid {
