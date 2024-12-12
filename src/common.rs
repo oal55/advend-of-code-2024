@@ -1,5 +1,6 @@
 use std::fs::{self, File};
 use std::io::BufReader;
+use std::ops::{Add, AddAssign, Neg, Sub, SubAssign};
 
 pub fn file_reader(file_path: &str) -> BufReader<File> {
     let file = File::open(file_path).expect(format!("Cannot open file at: {}", file_path).as_str());
@@ -20,4 +21,34 @@ impl Point {
     // maybe ensure unit vector?
     pub fn rotate_clockwise(&mut self) { (self.i, self.j) = (self.j, -self.i); }
     pub fn step(&self, unit_vec: &Point) ->Point { Point{i: self.i + unit_vec.i, j: self.j + unit_vec.j} }
+}
+
+
+impl Add for Point {
+    type Output = Self;
+    fn add(self, other: Self) -> Self { Self {i: self.i + other.i, j: self.j + other.j} }
+}
+
+impl AddAssign for Point {
+    fn add_assign(&mut self, other: Self) {
+        self.i += other.i;
+        self.j += other.j;
+    }
+}
+
+impl Sub for Point {
+    type Output = Self;
+    fn sub(self, other: Self) -> Self { Self {i: self.i - other.i, j: self.j - other.j} }
+}
+
+impl SubAssign for Point {
+    fn sub_assign(&mut self, other: Self) {
+        self.i -= other.i;
+        self.j -= other.j;
+    }
+}
+
+impl Neg for Point {
+    type Output = Self;
+    fn neg(self) -> Self::Output { Self { i: -self.i, j: -self.j} }
 }
