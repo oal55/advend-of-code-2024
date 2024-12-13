@@ -1,4 +1,4 @@
-use std::{collections::HashMap, sync::LazyLock, usize};
+use std::{collections::HashMap, sync::LazyLock};
 use crate::common::read_file;
 
 static TENS_POWERS: LazyLock<Vec<u64>> = LazyLock::new(|| {
