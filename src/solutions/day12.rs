@@ -13,8 +13,7 @@ impl RegionData {
     fn cost(&self) -> i64               { self.size * self.perim }
     fn cost_bulk_discount(&self) -> i64 { self.size * self.num_corners }
 }
-// gong qi jun
-// joe hisaishi
+
 pub fn run(file_path: &str) -> (i64, i64) {
     let grid = Grid::new_from_file(file_path);
     let mut visited: HashSet<Point> = HashSet::new();
