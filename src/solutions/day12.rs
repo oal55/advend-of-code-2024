@@ -13,9 +13,8 @@ impl RegionData {
     fn cost(&self) -> i64               { self.size * self.perim }
     fn cost_bulk_discount(&self) -> i64 { self.size * self.num_corners }
 }
-// gong qu jun
+// gong qi jun
 // joe hisaishi
-
 pub fn run(file_path: &str) -> (i64, i64) {
     let grid = Grid::new_from_file(file_path);
     let mut visited: HashSet<Point> = HashSet::new();
@@ -45,6 +44,14 @@ fn has_convex_corner(grid: &Grid, region_label: char, coordinate: &Point, dir: &
         (!grid.contains(&neighbor_2) || grid.get(&neighbor_2) != region_label);
 }
 
+/*
+Concave corner cells will have 2 friendly neighbors, and a foreign diagonal one
+ _____
+|x x x|
+|x|‾‾‾    
+ ‾
+If the top-left x is called with dir == (0, 1), we'll pick up the concave corner to its bottom right.
+*/
 fn has_concave_corner(grid: &Grid, region_label: char, coordinate: &Point, dir: &Point) -> bool {
     let neighbor_1 = *coordinate + *dir;
     let neighbor_2 = *coordinate + dir.rotated();
@@ -52,7 +59,7 @@ fn has_concave_corner(grid: &Grid, region_label: char, coordinate: &Point, dir: 
     return
         (grid.contains(&neighbor_1) && grid.get(&neighbor_1) == region_label) &&
         (grid.contains(&neighbor_2) && grid.get(&neighbor_2) == region_label) &&
-        (!grid.contains(&neighbor_3) || grid.get(&neighbor_3) != region_label);
+        (grid.get(&neighbor_3) != region_label);
 }
 
 fn span_region(grid: &Grid, region_label: char, p: &Point, visited: &mut HashSet<Point>, stats: &mut RegionData) {
@@ -62,7 +69,7 @@ fn span_region(grid: &Grid, region_label: char, p: &Point, visited: &mut HashSet
     visited.insert(*p);
     stats.size += 1;
     for dir in &UNIT_VECTORS {
-        // we are not under counting as these two calls can never both be true
+        // we are not under counting as these two calls can never both be true. A corner cannot be concave and convex at the same time
         if has_convex_corner(grid, region_label, p, dir) || has_concave_corner(grid, region_label, p, dir) {
             stats.num_corners += 1;
         }
