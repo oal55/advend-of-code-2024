@@ -6,3 +6,6 @@ test.in
 
 # constants and things
 .env
+
+# vim shiz
+*.swp
