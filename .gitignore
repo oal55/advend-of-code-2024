@@ -1,7 +1,8 @@
 /target
 
-# input files
-test.in
+# test input files
+*.in
+
 /input-files/*
 
 # constants and things
