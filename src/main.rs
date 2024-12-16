@@ -40,6 +40,7 @@ fn main() {
         12 => run(&input_file_path, solutions::run_day12),
         13 => run(&input_file_path, solutions::run_day13),
         14 => run(&input_file_path, solutions::run_day14),
+        16 => run(&input_file_path, solutions::run_day16),
         _ => panic!("Having a bad day")
     }
 }
