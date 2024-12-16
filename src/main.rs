@@ -4,6 +4,7 @@ use dotenv::dotenv;
 
 
 mod solutions;
+mod expected;
 mod common;
 
 const INPUT_FILES_DIR_NAME: &str = "input-files";
@@ -15,6 +16,10 @@ fn main() {
     dotenv().ok();
 
     let args: Vec<String> = env::args().collect();
+    if args[1].as_str() == "all" {
+        return run_all_days();
+    }
+
     let day = args[1].as_str().parse::<u32>().expect("Malformed day argument.");
     let custom_file_arg = args.get(2);
     if custom_file_arg.is_none() {
@@ -25,33 +30,49 @@ fn main() {
         Some(filepath) => filepath.to_string(),
         None => aoc_file_path(day)
     };
-    match day {
-        1 => run(&input_file_path, solutions::run_day01),
-        2 => run(&input_file_path, solutions::run_day02),
-        3 => run(&input_file_path, solutions::run_day03),
-        4 => run(&input_file_path, solutions::run_day04),
-        5 => run(&input_file_path, solutions::run_day05),
-        6 => run(&input_file_path, solutions::run_day06),
-        7 => run(&input_file_path, solutions::run_day07),
-        8 => run(&input_file_path, solutions::run_day08),
-        9 => run(&input_file_path, solutions::run_day09),
-        10 => run(&input_file_path, solutions::run_day10),
-        11 => run(&input_file_path, solutions::run_day11),
-        12 => run(&input_file_path, solutions::run_day12),
-        13 => run(&input_file_path, solutions::run_day13),
-        14 => run(&input_file_path, solutions::run_day14),
-        16 => run(&input_file_path, solutions::run_day16),
-        _ => panic!("Having a bad day")
+    run_day(day, &input_file_path);
+}
+
+fn run_all_days() {
+    for day in 1..15 {
+        ensure_aoc_input_exists(day);
+        run_day(day, &aoc_file_path(day));
     }
 }
 
-fn run<T: std::fmt::Display>(input_file_path: &String, runnable: SolutionFunction<T>) {
-    let (part1, part2) = runnable(input_file_path);
-    println!("Part1: {}", part1);
-    println!("Part2: {}", part2);
+fn run_day(day: u32, input_file_path: &str) {
+    match day {
+        1 => run(input_file_path, solutions::run_day01, day),
+        2 => run(input_file_path, solutions::run_day02, day),
+        3 => run(input_file_path, solutions::run_day03, day),
+        4 => run(input_file_path, solutions::run_day04, day),
+        5 => run(input_file_path, solutions::run_day05, day),
+        6 => run(input_file_path, solutions::run_day06, day),
+        7 => run(input_file_path, solutions::run_day07, day),
+        8 => run(input_file_path, solutions::run_day08, day),
+        9 => run(input_file_path, solutions::run_day09, day),
+        10 => run(input_file_path, solutions::run_day10, day),
+        11 => run(input_file_path, solutions::run_day11, day),
+        12 => run(input_file_path, solutions::run_day12, day),
+        13 => run(input_file_path, solutions::run_day13, day),
+        14 => run(input_file_path, solutions::run_day14, day),
+        16 => run(input_file_path, solutions::run_day16, day),
+        _ => panic!("Having a bad day: {day}")
+    }
 }
 
-fn aoc_file_path(day_arg: u32) -> String { format!("{INPUT_FILES_DIR_NAME}/day{:0>2}.txt", day_arg) }
+fn run<T: std::fmt::Display>(input_file_path: &str, runnable: SolutionFunction<T>, day: u32) {
+    println!("Running day {day}");
+    let (part1, part2) = runnable(input_file_path);
+    println!("  part1: {}", part1);
+    println!("  Part2: {}", part2);
+    if let Some((expected_1, expected_2)) = expected::SOLUTIONS.get(&day) {
+        assert_eq!(part1.to_string(), expected_1.to_string());
+        assert_eq!(part2.to_string(), expected_2.to_string());
+    }
+}
+
+fn aoc_file_path(day: u32) -> String { format!("{INPUT_FILES_DIR_NAME}/day{:0>2}.txt", day) }
 
 fn ensure_aoc_input_exists(day: u32) {
     let relative_filepath = aoc_file_path(day);
