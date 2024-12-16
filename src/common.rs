@@ -23,9 +23,10 @@ pub const UNIT_VECTORS: [Point; 4] = [Point{i:1, j:0},Point{i:0, j:1},Point{i:-1
 impl Point {
     pub fn rotate_clockwise(&mut self) { (self.i, self.j) = (self.j, -self.i); }
 
-    pub fn rotated(&self) -> Point { Point{i:self.j, j:-self.i} }
+    pub fn rotated_clockwise(&self)   -> Point { Point{i:self.j, j:-self.i} }
+    pub fn rotated_widdershins(&self) -> Point { Point{i:-self.j, j:self.i} }
 
-    pub fn step(&self, unit_vec: &Point) -> Point { Point{i: self.i + unit_vec.i, j: self.j + unit_vec.j} }
+    pub fn step(&self, dir: &Point) -> Point { Point{i: self.i + dir.i, j: self.j + dir.j} }
     
     pub fn times(&self, scalar: i32) -> Point { Point{i: self.i*scalar, j: self.j*scalar} }
 

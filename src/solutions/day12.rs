@@ -37,7 +37,7 @@ pub fn run(file_path: &str) -> (i64, i64) {
 
 fn has_convex_corner(grid: &Grid, region_label: char, coordinate: &Point, dir: &Point) -> bool {
     let neighbor_1 = *coordinate + *dir;
-    let neighbor_2 = *coordinate + dir.rotated();
+    let neighbor_2 = *coordinate + dir.rotated_clockwise();
     return
         (!grid.contains(&neighbor_1) || grid.get(&neighbor_1) != region_label) &&
         (!grid.contains(&neighbor_2) || grid.get(&neighbor_2) != region_label);
@@ -53,8 +53,8 @@ If the top-left x is called with dir == (0, 1), we'll pick up the concave corner
 */
 fn has_concave_corner(grid: &Grid, region_label: char, coordinate: &Point, dir: &Point) -> bool {
     let neighbor_1 = *coordinate + *dir;
-    let neighbor_2 = *coordinate + dir.rotated();
-    let neighbor_3 = *coordinate + *dir + dir.rotated();
+    let neighbor_2 = *coordinate + dir.rotated_clockwise();
+    let neighbor_3 = *coordinate + *dir + dir.rotated_clockwise();
     return
         (grid.contains(&neighbor_1) && grid.get(&neighbor_1) == region_label) &&
         (grid.contains(&neighbor_2) && grid.get(&neighbor_2) == region_label) &&
