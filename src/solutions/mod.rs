@@ -12,6 +12,7 @@ mod day11;
 mod day12;
 mod day13;
 mod day14;
+mod day15;
 mod day16;
 
 pub use self::day01::run as run_day01;
@@ -28,4 +29,5 @@ pub use self::day11::run as run_day11;
 pub use self::day12::run as run_day12;
 pub use self::day13::run as run_day13;
 pub use self::day14::run as run_day14;
+pub use self::day15::run as run_day15;
 pub use self::day16::run as run_day16;

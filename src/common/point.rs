@@ -9,6 +9,14 @@ pub struct Point {
 
 pub const UNIT_VECTORS: [Point; 4] = [Point{i:1, j:0},Point{i:0, j:1},Point{i:-1, j:0},Point{i:0, j:-1}];
 
+pub struct Direction;
+impl Direction {
+    pub const UP: Point = UNIT_VECTORS[2];
+    pub const RIGHT: Point = UNIT_VECTORS[1];
+    pub const DOWN: Point = UNIT_VECTORS[0];
+    pub const LEFT: Point = UNIT_VECTORS[3];
+}
+
 impl Point {
     pub fn rotate_clockwise(&mut self) { (self.i, self.j) = (self.j, -self.i); }
 
