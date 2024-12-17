@@ -1,6 +1,5 @@
-use std::collections::{HashSet, VecDeque};
+use std::collections::VecDeque;
 use std::io::BufRead;
-use std::iter;
 
 use crate::common::io::file_reader;
 use crate::common::{Grid, Point, Direction};
@@ -22,7 +21,6 @@ pub fn run(file_path: &str) -> (i32, i32) {
         )
         .collect::<Vec<_>>();
 
-    // let _small_gps = part1(chars, &moves);
     let small_gps = move_and_get_gps(chars, &moves, 'O');
     let big_gps = move_and_get_gps(larger_chars, &moves, '[');
     
@@ -39,7 +37,7 @@ fn move_and_get_gps(chars: Vec<Vec<char>>, moves: &Vec<Point>, gps_target: char)
             cur_pos += dir;
         }
     }
-    return calc_gps(&grid, gps_target);
+    calc_gps(&grid, gps_target)
 }
 
 // true iff the bot is able to move
@@ -51,7 +49,6 @@ fn execute_move(grid: &mut Grid<char>, robot_pos: Point, dir: Point) -> bool {
         _ => panic!("Bad direction: {dir}")
     }
 }
-
 fn try_move_left_right(grid: &mut Grid<char>, initial_pos: Point, dir: Point) -> bool {
     let maybe_next_pos = initial_pos + dir;
     let reverse_dir = -dir;
@@ -68,38 +65,38 @@ fn try_move_left_right(grid: &mut Grid<char>, initial_pos: Point, dir: Point) ->
 }
 
 fn try_move_up_down(grid: &mut Grid<char>, initial_pos: Point, dir: Point) -> bool {
-    let mut cur_row: HashSet<Point> = HashSet::from_iter(vec![initial_pos]);
-    let mut rows_to_move: VecDeque<HashSet<Point>> = VecDeque::from_iter(iter::once(cur_row.clone()));
-    while !cur_row.is_empty() {
-        let next_space_to_occupy = rows_to_move.back().unwrap().iter()
-            .map(|pos| *pos + dir)
-            .collect::<HashSet<_>>();
+    let mut seen_pos_stack: VecDeque<Point> = VecDeque::from_iter(vec![initial_pos]);
+    let mut q_places_to_occupy: VecDeque<Point> = VecDeque::from_iter(vec![initial_pos]);
 
-        let moveable = next_space_to_occupy.iter().all(|pos| grid.contains(pos) && *grid.get(pos) != '#');
-        if !moveable {
-            return false;
+    while !q_places_to_occupy.is_empty() {
+        let cur_p = q_places_to_occupy.pop_front().unwrap() + dir;
+        match *grid.get(&cur_p) {
+            '[' => {
+                seen_pos_stack.push_back(cur_p);
+                seen_pos_stack.push_back(cur_p + Direction::RIGHT);
+                q_places_to_occupy.push_back(cur_p);
+                q_places_to_occupy.push_back(cur_p + Direction::RIGHT);
+            },
+            ']' => {
+                // This might have been pushed 1 iteration earlier.
+                if *seen_pos_stack.back().unwrap() != cur_p {
+                    seen_pos_stack.push_back(cur_p + Direction::LEFT);
+                    seen_pos_stack.push_back(cur_p);
+                    q_places_to_occupy.push_back(cur_p + Direction::LEFT);
+                    q_places_to_occupy.push_back(cur_p);
+                }
+            },
+            'O' => {
+                seen_pos_stack.push_back(cur_p);
+                q_places_to_occupy.push_back(cur_p);
+            },
+            '#' => return false,
+            _ => {},
         }
-
-        let mut next_boxes_to_move: HashSet<Point> = HashSet::new();
-        next_space_to_occupy.iter()
-            .filter(|p| is_moveable(*grid.get(p)))
-            .for_each(|p| {
-                let val = *grid.get(p);
-                if val == ']' {
-                    next_boxes_to_move.insert(*p + Direction::LEFT);
-                }
-                if val == '[' {
-                    next_boxes_to_move.insert(*p + Direction::RIGHT);
-                }
-                next_boxes_to_move.insert(*p);
-            });
-        
-        rows_to_move.push_back(next_boxes_to_move.clone());
-        cur_row = next_boxes_to_move;
     }
 
-    while !rows_to_move.is_empty() {
-        rows_to_move.pop_back().unwrap().iter().for_each(|pos| move_point(grid, *pos, dir));
+    while let Some(pos) = seen_pos_stack.pop_back() {
+        move_point(grid, pos, dir);
     }
 
     true
@@ -109,7 +106,7 @@ fn move_point(grid: &mut Grid<char>, pos: Point, dir: Point) {
     grid.set(&(pos + dir), *grid.get(&pos));
     grid.set(&pos, '.');
 }
-fn is_moveable(c: char)                  -> bool { c == '[' || c == ']' || c == 'O'}
+
 fn calc_gps(grid: &Grid<char>, val: char) -> i32 { grid.find(&val).iter().map(|p| 100*p.i + p.j).sum() }
 
 fn find_empty_slot_from(mut p: Point, grid: &Grid<char>, dir: Point) -> Option<Point>{
