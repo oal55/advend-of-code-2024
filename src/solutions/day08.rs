@@ -6,28 +6,28 @@ use crate::common::io::read_file;
 
 pub fn run(file_path: &str) -> (i64, i64) {
     let field = read_file(file_path).parse::<Field>().unwrap();
-    return (part1(&field), part2(&field))
+    (part1(&field), part2(&field))
 }
 
 fn part1(field: &Field) -> i64 {
     let mut unique_points = HashSet::new();
     for (_, points) in field.antennas.clone() {
-        Combinations::new(points.len()).into_iter()
+        Combinations::new(points.len())
             .map(|(i, j)| (&points[i], &points[j]))
             .flat_map(|(&p, &q)| {
                 let diff = q - p;
-                return vec!(q + diff, p - diff);
+                vec!(q + diff, p - diff)
             })
             .filter(|p| field.contains(p))
             .for_each(|p| { unique_points.insert(p); });
     }
-    return unique_points.len() as i64;
+    unique_points.len() as i64
 }
 
 fn part2(field: &Field) -> i64 {
     let mut unique_points = HashSet::new();
     for (_, points) in field.antennas.clone() {
-        Combinations::new(points.len()).into_iter()
+        Combinations::new(points.len())
             .map(|(i, j)| (&points[i], &points[j]))
             .for_each(|(&p, &q)| {
                 let diff = q - p;
@@ -45,7 +45,7 @@ fn part2(field: &Field) -> i64 {
                 }
             });
     }
-    return unique_points.len() as i64;
+    unique_points.len() as i64
 }
 
 struct Combinations {
@@ -70,7 +70,7 @@ impl Iterator for Combinations {
             self.i += 1;
             self.j = self.i + 1;
         }
-        return Some((self.i, self.j));
+        Some((self.i, self.j))
     }
 }
 
@@ -95,7 +95,7 @@ impl FromStr for Field {
 
         let mut antennas = HashMap::new();
         for (i, line) in lines.iter().enumerate() {
-            for (j, character) in line.chars().into_iter().enumerate() {
+            for (j, character) in line.chars().enumerate() {
                 if character != '.' {
                     antennas.entry(character).or_insert_with(Vec::new).push(Point{i: i as i32, j: j as i32}); // NORBAY?! easier/nicer way to cast?
                 }

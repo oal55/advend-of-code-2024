@@ -34,15 +34,14 @@ pub fn run(file_path: &str) -> (i64, i64) {
             }
         }
     }
-    return (sum_cost, sum_discount_cost);
+    (sum_cost, sum_discount_cost)
 }
 
 fn has_convex_corner(grid: &Grid, region_label: char, coordinate: &Point, dir: &Point) -> bool {
     let neighbor_1 = *coordinate + *dir;
     let neighbor_2 = *coordinate + dir.rotated_clockwise();
-    return
-        (!grid.contains(&neighbor_1) || grid.get(&neighbor_1) != region_label) &&
-        (!grid.contains(&neighbor_2) || grid.get(&neighbor_2) != region_label);
+    (!grid.contains(&neighbor_1) || grid.get(&neighbor_1) != region_label) &&
+        (!grid.contains(&neighbor_2) || grid.get(&neighbor_2) != region_label)
 }
 
 /*
@@ -57,10 +56,9 @@ fn has_concave_corner(grid: &Grid, region_label: char, coordinate: &Point, dir: 
     let neighbor_1 = *coordinate + *dir;
     let neighbor_2 = *coordinate + dir.rotated_clockwise();
     let neighbor_3 = *coordinate + *dir + dir.rotated_clockwise();
-    return
-        (grid.contains(&neighbor_1) && grid.get(&neighbor_1) == region_label) &&
+    (grid.contains(&neighbor_1) && grid.get(&neighbor_1) == region_label) &&
         (grid.contains(&neighbor_2) && grid.get(&neighbor_2) == region_label) &&
-        (grid.get(&neighbor_3) != region_label);
+        (grid.get(&neighbor_3) != region_label)
 }
 
 fn span_region(grid: &Grid, region_label: char, p: &Point, visited: &mut HashSet<Point>, stats: &mut RegionData) {
@@ -94,12 +92,12 @@ struct Grid {
 
 impl Grid {
     pub fn new_from_file(file_path: &str) -> Grid {
-        let grid: Vec<Vec<char>> = file_reader(file_path).lines().into_iter()
+        let grid: Vec<Vec<char>> = file_reader(file_path).lines()
             .map(|line| line.unwrap().chars().collect())
             .collect();
         let num_rows = grid.len();
         let num_cols = grid[0].len();
-        return Grid{grid, num_rows: num_rows as i32, num_cols: num_cols as i32}
+        Grid{grid, num_rows: num_rows as i32, num_cols: num_cols as i32}
     }
 
     fn contains(&self, p: &Point) -> bool { 0 <= p.i && p.i < self.num_rows && 0 <= p.j && p.j < self.num_cols }

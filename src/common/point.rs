@@ -20,12 +20,12 @@ impl Point {
     pub fn times(&self, scalar: i32) -> Point { Point{i: self.i*scalar, j: self.j*scalar} }
 
     pub fn neighbors(&self) -> Vec<Point> {
-        return vec![
+        vec![
             Point{i: self.i-1, j: self.j},
             Point{i: self.i, j: self.j+1},
             Point{i: self.i+1, j: self.j},
             Point{i: self.i, j: self.j-1}
-        ];
+        ]
     }
 }
 

@@ -17,17 +17,17 @@ pub fn run(file_path: &str) -> (i64, i64) {
             res_three_op += target;
         }
     }
-    return (res_two_op, res_three_op);
+    (res_two_op, res_three_op)
 }
 
 fn parse_line(line: String) -> (i64, Vec<i64>) {
     let (fi, se) = line.split_once(": ").unwrap();
     let target = fi.parse::<i64>().unwrap();
-    let nums = se.split(" ").into_iter()
+    let nums = se.split(" ")
         .map(|num| num.parse::<i64>().unwrap())
         .collect();
 
-    return (target, nums);
+    (target, nums)
 }
 
 fn check(target: i64, res: i64, nums: &Vec<i64>, i_num: usize, allowed_operators: &Vec<Operator>) -> bool {
@@ -43,11 +43,11 @@ fn check(target: i64, res: i64, nums: &Vec<i64>, i_num: usize, allowed_operators
             return true;
         }
     }
-    return false;
+    false
 }
 
 fn calc(fi: i64, se: i64, op: &Operator) -> Option<i64> {
-    return match op {
+    match op {
         Operator::Add => i64::checked_add(fi, se),
         Operator::Mul => i64::checked_mul(fi, se),
         Operator::Concat => concat(fi, se),
@@ -59,5 +59,5 @@ fn concat(fi: i64, se: i64) -> Option<i64> {
     while se >= coeff {
         coeff *= 10;
     }
-    return fi.checked_mul(coeff).and_then(|x| x.checked_add(se));
+    fi.checked_mul(coeff).and_then(|x| x.checked_add(se))
 }

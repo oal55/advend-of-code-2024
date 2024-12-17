@@ -20,7 +20,7 @@ pub fn run(file_path: &str) -> (i64, i64) {
         .map(|(a, b)| a * 3 + b )
         .sum();
     
-    return (easy, less_easy);
+    (easy, less_easy)
 }
 
 fn parse_equations(file_path: &str) -> Vec<Equation> {
@@ -39,7 +39,7 @@ fn parse_equations(file_path: &str) -> Vec<Equation> {
             target: [prize_x, prize_y]
         });
     }
-    return res;
+    res
 }
 
 fn extract_xy(button_line: &str, string_to_skip: &str) -> (i64, i64) {
@@ -47,19 +47,19 @@ fn extract_xy(button_line: &str, string_to_skip: &str) -> (i64, i64) {
 
     let x = button_line.chars()
         .skip(string_to_skip.len())
-        .take_while(|c| c.is_digit(10))
+        .take_while(|c| c.is_ascii_digit())
         .collect::<String>()
         .parse::<i64>().unwrap();
 
     let y = {
         let y_reversed = button_line.chars().rev()
-        .take_while(|c| c.is_digit(10))
+        .take_while(|c| c.is_ascii_digit())
         .collect::<String>();
 
         y_reversed.chars().rev().collect::<String>().parse::<i64>().unwrap()
     };
 
-    return (x,y);
+    (x,y)
 }
 
 
@@ -75,7 +75,7 @@ impl Equation {
             return None
         }
         let [a_press, b_press] = Equation::div(&coefficients, d);
-        return Some((a_press, b_press));
+        Some((a_press, b_press))
     }
 
     fn det(&self) -> i64                { self.matrix[0][0]*self.matrix[1][1] - self.matrix[0][1]*self.matrix[1][0] }

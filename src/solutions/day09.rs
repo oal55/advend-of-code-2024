@@ -12,7 +12,7 @@ pub fn run(file_path: &str) -> (usize, usize) {
 }
 
 fn part1(mut disk_summary: Vec<usize>) -> usize {
-    let (mut i_left, mut i_right) = (0 as usize, disk_summary.len() - 2 + disk_summary.len()%2); // last file
+    let (mut i_left, mut i_right) = (0_usize, disk_summary.len() - 2 + disk_summary.len()%2); // last file
 
     let mut disk = DiskMeta::new();
     while i_left < i_right {
@@ -33,7 +33,7 @@ fn part1(mut disk_summary: Vec<usize>) -> usize {
             }
         }
     }
-    return disk.check_sum;
+    disk.check_sum
 }
 
 fn part2(disk_summary: Vec<usize>) -> usize {
@@ -57,7 +57,7 @@ fn part2(disk_summary: Vec<usize>) -> usize {
         };
         checksum += calc_checksum(file_meta, final_offset);
     }
-    return checksum;
+    checksum
 }
 
 fn calc_checksum(file: &FileMeta, from_offset: usize) -> usize{
@@ -66,7 +66,7 @@ fn calc_checksum(file: &FileMeta, from_offset: usize) -> usize{
     for i in 0..file.size {
         res += (from_offset + i) * file.id;
     }
-    return res;
+    res
 }
 
 
@@ -84,7 +84,7 @@ impl DiskMeta {
 struct FileMeta {id: usize, size: usize }
 struct DiskSegments { free_segments: Vec<BinaryHeap<Reverse<usize>>> }
 impl DiskSegments {
-    fn new() -> DiskSegments { DiskSegments{free_segments: (0..10).into_iter().map(|_| BinaryHeap::new()).collect()} }
+    fn new() -> DiskSegments { DiskSegments{free_segments: (0..10).map(|_| BinaryHeap::new()).collect()} }
 
     fn add_segment(&mut self, offset: usize, size: usize) {
         self.free_segments[size].push(Reverse(offset));
@@ -117,6 +117,6 @@ impl DiskSegments {
             let remaining_start_offset = best_segment_offset + file_size;
             self.free_segments[remaining_free_size].push(Reverse(remaining_start_offset));
         }
-        return Some(best_segment_offset)
+        Some(best_segment_offset)
     }
 }

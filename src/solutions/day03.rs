@@ -17,7 +17,7 @@ fn part1(file_path: &str) -> i64 {
         let q = se.parse::<i64>().unwrap();
         res += p*q;
     }
-    return res;
+    res
 }
 
 fn part2(file_path: &str) -> i64 {
@@ -40,5 +40,5 @@ fn part2(file_path: &str) -> i64 {
             }
         }
     }
-    return res;
+    res
 }

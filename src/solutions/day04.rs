@@ -10,11 +10,11 @@ struct WordFinder<'a> {
 }
 
 pub fn run(file_path: &str) -> (i64, i64) {
-    let grid: Vec<Vec<char>> = file_reader(file_path).lines().into_iter()
+    let grid: Vec<Vec<char>> = file_reader(file_path).lines()
         .map(|line| line.unwrap().chars().collect())
         .collect();
     let word_finder = WordFinder::new(&grid);
-    return (part1(&word_finder), part2(&word_finder));
+    (part1(&word_finder), part2(&word_finder))
 }
 
 fn part1(word_finder: &WordFinder) -> i64 {
@@ -23,16 +23,15 @@ fn part1(word_finder: &WordFinder) -> i64 {
         let diffs :Vec<(usize, usize)> =  std::iter::once((0, 0)).chain(std::iter::repeat_n(direction, 3)).collect();
         res += word_finder.count_pattern("XMAS", &diffs);
     }
-    return res;
+    res
 }
 
 fn part2(word_finder: &WordFinder) -> i64 {
     let diffs = massage_into_usize(vec![(0, 0), (-1, -1), (0, 2), (2, 0), (0, -2)]);
-    return
-        word_finder.count_pattern("AMMSS", &diffs) + 
+    word_finder.count_pattern("AMMSS", &diffs) + 
         word_finder.count_pattern("AMSSM", &diffs) + 
         word_finder.count_pattern("ASSMM", &diffs) + 
-        word_finder.count_pattern("ASMMS", &diffs);
+        word_finder.count_pattern("ASMMS", &diffs)
 }
 
 fn massage_into_usize(tuples: Vec<(i32, i32)>) -> Vec<(usize, usize)> { tuples.iter().map(|(i,j)| (*i as usize, *j as usize)).collect() }
@@ -54,7 +53,7 @@ impl<'a> WordFinder<'a> {
                 }
             }
         }
-        return res;
+        res
     }
 
     fn matches_at(&self, i: usize, j: usize, word: &Vec<char>, diffs: &Vec<(usize, usize)>) -> bool {
@@ -66,7 +65,7 @@ impl<'a> WordFinder<'a> {
                 return false;
             }
         }
-        return true;
+        true
     }
 
     fn inside(&self, i: usize, j: usize) -> bool { i < self.num_rows && j < self.num_cols }

@@ -1,4 +1,3 @@
-use reqwest;
 use std::{env, fs};
 use dotenv::dotenv;
 
@@ -76,7 +75,7 @@ fn aoc_file_path(day: u32) -> String { format!("{INPUT_FILES_DIR_NAME}/day{:0>2}
 
 fn ensure_aoc_input_exists(day: u32) {
     let relative_filepath = aoc_file_path(day);
-    let file_exists = fs::exists(&relative_filepath).expect(format!("Cannot confirm whether file exists at {}", relative_filepath).as_str());
+    let file_exists = fs::exists(&relative_filepath).unwrap_or_else(|_| panic!("Cannot confirm whether file exists at {}", relative_filepath));
     if file_exists {
         return
     }

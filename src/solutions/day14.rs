@@ -7,7 +7,7 @@ use crate::common::io::file_reader;
 
 static LINE_RE: LazyLock<Regex> = LazyLock::new(|| {
     let int_re = r"(-?\d+)";
-    return Regex::new(format!("p={int_re},{int_re} v={int_re},{int_re}").as_str()).unwrap()
+    Regex::new(format!("p={int_re},{int_re} v={int_re},{int_re}").as_str()).unwrap()
 });
 
 // const I_MAX: i32 = 11; // 103
@@ -41,19 +41,19 @@ pub fn run(file_path: &str) -> (u32, u32) {
         quadrants[i_quant] += num_bots;
     }
 
-    (quadrants.into_iter().fold(1, |acc, cur| acc * cur), 0) }
+    (quadrants.into_iter().product::<u32>(), 0) }
 
 fn parse_bots(file_path: &str) -> Vec<Bot> {
-    return file_reader(file_path).lines().into_iter()
+    file_reader(file_path).lines()
         .map(|line| parse_line(line.unwrap()))
-        .collect();
+        .collect()
 }
 
 fn parse_line(line: String) -> Bot {
     let (_, [px,py,vx,vy]) = LINE_RE.captures(&line)
-        .expect(format!("Re doesn't match line: {line}").as_str())
+        .unwrap_or_else(|| panic!("Re doesn't match line: {line}"))
         .extract();
-    return Bot{
+    Bot{
         pos: Point{i: py.parse().unwrap(), j: px.parse().unwrap()},
         velocity: Point{i: vy.parse().unwrap(), j: vx.parse().unwrap()}
     }

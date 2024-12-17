@@ -8,7 +8,7 @@ pub fn run(file_path: &str) -> (usize, usize) {
     let field = Field::new_from_file(file_path);
     
     let mut visited = Vec2D::new(field.num_rows, field.num_cols, || false);
-    let mut accessible_trail_ends = Vec2D::new(field.num_rows, field.num_cols, || HashSet::<Point>::new());
+    let mut accessible_trail_ends = Vec2D::new(field.num_rows, field.num_cols, HashSet::<Point>::new);
     let mut num_trails = Vec2D::new(field.num_rows, field.num_cols, || 0);
     let mut queue: VecDeque<Point> = VecDeque::new();
 
@@ -22,7 +22,7 @@ pub fn run(file_path: &str) -> (usize, usize) {
     while !queue.is_empty() {
         let cur = queue.pop_front().unwrap();
         let summits_from_cur = accessible_trail_ends.get(&cur).clone();
-        let num_trails_from_cur = num_trails.get(&cur).clone();
+        let num_trails_from_cur = *num_trails.get(&cur);
         for n in cur.neighbors() {
             if field.contains(&n) && field.get(&n) + 1 == field.get(&cur) {
                 // we get to add summits this way because all "trails" are same length
@@ -42,7 +42,7 @@ pub fn run(file_path: &str) -> (usize, usize) {
         total_score += accessible_trail_ends.get(&p).len();
         total_num_trails += num_trails.get(&p);
     }
-    return (total_score, total_num_trails);
+    (total_score, total_num_trails)
 }
 
 struct Field {
@@ -53,7 +53,7 @@ struct Field {
 
 impl Field {
     fn new_from_file(file_path: &str) -> Field {
-        let heights: Vec<Vec<i32>> = file_reader(file_path).lines().into_iter()
+        let heights: Vec<Vec<i32>> = file_reader(file_path).lines()
         .map(|line| line.unwrap().chars()
             .map(|c| match c {
                 '.' => -5,
@@ -63,7 +63,7 @@ impl Field {
         )
         .collect();
         let (num_rows, num_cols) = (heights.len() as i32, heights[0].len() as i32);
-        return Field{heights, num_rows, num_cols}
+        Field{heights, num_rows, num_cols}
     }
     
     fn get(&self, p: &Point) -> i32 { self.heights[p.i as usize][p.j as usize] }
@@ -71,12 +71,12 @@ impl Field {
     fn contains(&self, p: &Point) -> bool { 0 <= p.i && p.i < self.num_rows && 0 <= p.j && p.j < self.num_cols }
 
     fn get_cells_of_height(&self, target_height: i32) -> Vec<Point> {
-        return self.heights.iter().enumerate()
+        self.heights.iter().enumerate()
             .flat_map(|(i, row)| row.iter().enumerate()
                 .filter(|(_, &height)| height == target_height)
                 .map(move |(j, _)| Point{i: i as i32, j: j as i32})
             )
-            .collect();
+            .collect()
     }
 
 }

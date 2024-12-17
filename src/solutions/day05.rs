@@ -10,28 +10,28 @@ pub fn run(file_path: &str) -> (i64, i64) { (part1(file_path), part2(file_path))
 fn part1(file_path: &str) -> i64 {
     let (dependencies, sequences) = read_things(file_path);
 
-    return sequences.iter()
+    sequences.iter()
         .filter(|&s| in_order(&dependencies, s))
         .map(middle)
-        .sum();
+        .sum()
 }
 
 fn part2(file_path: &str) -> i64 {
     let (dependencies, sequences) = read_things(file_path);
 
-    return sequences.iter()
+    sequences.iter()
         .filter(|&s| !in_order(&dependencies, s))
         .map(|sequence| {
             let indegrees = build_indegrees(&dependencies, sequence);
             let mut res = sequence.clone();
             res.sort_by_key(|num| indegrees.get(num).unwrap_or(&0));
-            return middle(&res);
+            middle(&res)
         })
-        .sum();
+        .sum()
 }
 
 fn in_order(dependencies: &HashMap<i64, Vec<i64>>, sequence: &Vec<i64>) -> bool {
-    let mut indegrees = build_indegrees(&dependencies, sequence);
+    let mut indegrees = build_indegrees(dependencies, sequence);
     for num in sequence {
         if *indegrees.get(num).unwrap_or(&0) != 0 {
             return false;
@@ -42,19 +42,19 @@ fn in_order(dependencies: &HashMap<i64, Vec<i64>>, sequence: &Vec<i64>) -> bool 
             }
         }
     }
-    return true;
+    true
 }
 
 fn build_indegrees(dependencies: &HashMap<i64, Vec<i64>>, sequence: &Vec<i64>) -> HashMap<i64, i64> {
     let mut indegrees = HashMap::new();
     for src in sequence {
-        for dst in dependencies.get(&src).unwrap_or(&EMPTY_VEC) {
+        for dst in dependencies.get(src).unwrap_or(&EMPTY_VEC) {
             if sequence.contains(dst) {
                 *indegrees.entry(*dst).or_insert(0) += 1
             }
         }
     }
-    return indegrees;
+    indegrees
 }
 
 fn read_things(file_path: &str) -> (HashMap<i64, Vec<i64>>, Vec<Vec<i64>>) {
@@ -65,15 +65,15 @@ fn read_things(file_path: &str) -> (HashMap<i64, Vec<i64>>, Vec<Vec<i64>>) {
         .map(|line| line.unwrap())
         .take_while(|line| !line.is_empty())
         .for_each(|line| {
-            let (fi, se) = line.split_once("|").expect(format!("Cannot split line {}", line).as_str());
+            let (fi, se) = line.split_once("|").unwrap_or_else(|| panic!("Cannot split line {}", line));
             by_dependency.entry(into_i64(fi)).or_insert_with(Vec::new).push(into_i64(se));
         });
     
     let sequences = it.map(|line| line.unwrap())
-        .map(|line| line.split(",").into_iter().map(into_i64).collect())
+        .map(|line| line.split(",").map(into_i64).collect())
         .collect();
 
-    return (by_dependency, sequences);
+    (by_dependency, sequences)
 }
 
 #[inline]

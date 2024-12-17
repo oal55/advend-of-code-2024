@@ -8,7 +8,7 @@ use crate::common::{Point, UNIT_VECTORS};
 use crate::common::io::file_reader;
 
 pub fn run(file_path: &str) -> (u64, u64) {
-    let chars: Vec<Vec<char>> = file_reader(file_path).lines().into_iter()
+    let chars: Vec<Vec<char>> = file_reader(file_path).lines()
         .map(|line| line.unwrap().chars().collect())
         .collect();
 
@@ -17,7 +17,7 @@ pub fn run(file_path: &str) -> (u64, u64) {
 
     let graph: DirectedGraph = DirectedGraph::new_from_grid(&chars);
 
-    return calc(&graph, &p_start, &p_end);
+    calc(&graph, &p_start, &p_end)
 }
 
 fn calc(graph: &DirectedGraph, p_start: &Point, p_end: &Point) -> (u64, u64) {
@@ -47,7 +47,7 @@ fn calc(graph: &DirectedGraph, p_start: &Point, p_end: &Point) -> (u64, u64) {
         }
         
         distances.insert(cur_node, cur_cost);
-        parents.entry(cur_node).or_insert_with(HashSet::new).insert(cur_parent);
+        parents.entry(cur_node).or_default().insert(cur_parent);
         if cur_node.coords == *p_end {
             max_allowed_cost = cur_cost;
             continue;
@@ -74,7 +74,7 @@ fn calc(graph: &DirectedGraph, p_start: &Point, p_end: &Point) -> (u64, u64) {
             queue.push_back(*parent);
         }
     }
-    return (max_allowed_cost, seen_points.len() as u64);
+    (max_allowed_cost, seen_points.len() as u64)
 
 }
 
@@ -116,11 +116,11 @@ impl DirectedGraph {
                 .map(move |(j, _)| Point{i: i as i32, j: j as i32}) // why do I move!?@#$%^&*( elp.)
             ).collect();
 
-        return DirectedGraph{
+        DirectedGraph{
             i_range: 0..chars.len() as i32,
             j_range: 0..chars[0].len() as i32,
             walls
-        };
+        }
     }
 
     fn neighbors(&self, Node{coords, dir}: &Node) -> Vec<(Node, u64)> {
@@ -132,7 +132,7 @@ impl DirectedGraph {
         if self.contains(&next_coord) && !self.walls.contains(&next_coord) {
             neighbors.push((Node{coords: next_coord, dir: *dir}, 1));
         }
-        return neighbors;
+        neighbors
     }
 
     fn contains(&self, p: &Point) -> bool { self.i_range.contains(&p.i) && self.j_range.contains(&p.j) }

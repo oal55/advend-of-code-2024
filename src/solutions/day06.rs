@@ -5,7 +5,7 @@ use crate::common::Point;
 use crate::common::io::file_reader;
 
 pub fn run(file_path: &str) -> (i64, i64) {
-    let chars: Vec<Vec<char>> = file_reader(file_path).lines().into_iter()
+    let chars: Vec<Vec<char>> = file_reader(file_path).lines()
         .map(|line| line.unwrap().chars().collect())
         .collect();
     let start = find_starting_point(&chars);
@@ -14,18 +14,18 @@ pub fn run(file_path: &str) -> (i64, i64) {
     let seen_points = walk_out_of_grid(&grid, &start);
 
     let mut num_loops = 0;
-    for (point, _) in &seen_points {
+    for point in seen_points.keys() {
         if has_loop(&grid, &start, point) {
             num_loops += 1;
         }
     }
     
-    return (seen_points.len() as i64, num_loops)
+    (seen_points.len() as i64, num_loops)
 }
 
 fn has_loop(grid: &Grid, start: &Point, extra: &Point) -> bool {
     let mut direction = Point{i:-1, j:0};
-    let mut cur = start.clone();
+    let mut cur = *start;
 
     let mut steps = 0;
     loop {
@@ -47,12 +47,12 @@ fn has_loop(grid: &Grid, start: &Point, extra: &Point) -> bool {
 
 fn walk_out_of_grid(grid: &Grid, start: &Point) -> HashMap<Point, Point> {
     let mut direction = Point{i:-1, j:0};
-    let mut cur = start.clone();
+    let mut cur = *start;
 
     let mut seen_points: HashMap<Point, Point> = HashMap::new(); // coord -> dir
 
     loop {
-        seen_points.insert(cur.clone(), direction.clone()); // this clone necessary?
+        seen_points.insert(cur, direction); // this clone necessary?
         
         let maybe_next = cur.step(&direction);
         if !grid.inside(&maybe_next) {

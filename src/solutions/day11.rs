@@ -8,27 +8,27 @@ static TENS_POWERS: LazyLock<Vec<u64>> = LazyLock::new(|| {
         res.push(pow);
         pow *= 10;
     }
-    return res;
+    res
 });
 
 pub fn run(file_path: &str) -> (u64, u64) {
 
     let stones = read_file(file_path)
-        .split_ascii_whitespace().into_iter()
-        .map(|num| num.parse::<u64>().expect(format!("Unable to parse: {num}").as_str()))
+        .split_ascii_whitespace()
+        .map(|num| num.parse::<u64>().unwrap_or_else(|_| panic!("Unable to parse: {num}")))
         .fold(HashMap::<u64, u64>::new(), |mut acc, c| {
             *acc.entry(c).or_default() += 1;
-            return acc
+            acc
         });
 
     
     let blink_25 = (0..25).fold(stones.clone(), |cur_stones, _| blink(cur_stones));
     let blink_75 = (0..75).fold(stones.clone(), |cur_stones, _| blink(cur_stones));
 
-    return (
+    (
         blink_25.values().sum(),
         blink_75.values().sum()
-    );
+    )
 }
 
 fn blink(stones: HashMap<u64, u64>) -> HashMap<u64, u64> {
@@ -49,5 +49,5 @@ fn blink(stones: HashMap<u64, u64>) -> HashMap<u64, u64> {
         }
     }
     // println!("res: {:?}", res);
-    return res;
+    res
 }

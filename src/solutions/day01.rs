@@ -26,7 +26,7 @@ fn part1(file_path: &str) -> i64 {
 
     nums_p.sort();
     nums_q.sort();
-    return nums_p.iter().zip(nums_q.iter()).map(|(p, q)| (p - q).abs()).sum();
+    nums_p.iter().zip(nums_q.iter()).map(|(p, q)| (p - q).abs()).sum()
 }
 
 fn part2(file_path: &str) -> i64 {
@@ -47,7 +47,7 @@ fn part2(file_path: &str) -> i64 {
             }
         }
     }
-    return nums_p.iter().map(|p| p * freq.get(p).unwrap_or(&0)).sum();
+    nums_p.iter().map(|p| p * freq.get(p).unwrap_or(&0)).sum()
 }
 
 
