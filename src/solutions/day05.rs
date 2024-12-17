@@ -1,5 +1,7 @@
-use std::{collections::HashMap, io::BufRead};
-use crate::common::file_reader;
+use std::collections::HashMap;
+use std::io::BufRead;
+
+use crate::common::io::file_reader;
 
 const EMPTY_VEC: Vec<i64> = Vec::new(); // fml.
 
@@ -40,7 +42,6 @@ fn in_order(dependencies: &HashMap<i64, Vec<i64>>, sequence: &Vec<i64>) -> bool 
             }
         }
     }
-
     return true;
 }
 

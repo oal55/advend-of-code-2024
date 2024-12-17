@@ -1,5 +1,8 @@
-use std::{collections::HashMap, io::BufRead};
-use crate::common::{file_reader, Point};
+use std::collections::HashMap;
+use std::io::BufRead;
+
+use crate::common::Point;
+use crate::common::io::file_reader;
 
 pub fn run(file_path: &str) -> (i64, i64) {
     let chars: Vec<Vec<char>> = file_reader(file_path).lines().into_iter()

@@ -1,6 +1,7 @@
 use core::panic;
 use std::{io::BufRead, iter::zip};
-use crate::common::file_reader;
+
+use crate::common::io::file_reader;
 
 struct WordFinder<'a> {
     grid: &'a Vec<Vec<char>>,

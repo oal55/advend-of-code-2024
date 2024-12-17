@@ -4,7 +4,8 @@ use std::cmp::Ordering;
 use std::io::BufRead;
 use std::ops::Range;
 
-use crate::common::{file_reader, Point, UNIT_VECTORS};
+use crate::common::{Point, UNIT_VECTORS};
+use crate::common::io::file_reader;
 
 pub fn run(file_path: &str) -> (u64, u64) {
     let chars: Vec<Vec<char>> = file_reader(file_path).lines().into_iter()

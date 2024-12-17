@@ -1,5 +1,7 @@
-use std::{cmp::{min, Reverse}, collections::BinaryHeap, usize};
-use crate::common::read_file;
+use std::cmp::{min, Reverse};
+use std::collections::BinaryHeap;
+
+use crate::common::io::read_file;
 
 pub fn run(file_path: &str) -> (usize, usize) {
     let disk_summary: Vec<usize> = read_file(file_path).trim().chars()

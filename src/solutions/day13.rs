@@ -1,5 +1,6 @@
 use std::io::BufRead;
-use crate::common::file_reader;
+
+use crate::common::io::file_reader;
 
 pub fn run(file_path: &str) -> (i64, i64) {
     let equations = parse_equations(file_path);

@@ -4,8 +4,8 @@ use dotenv::dotenv;
 
 
 mod solutions;
-mod expected;
 mod common;
+mod expected;
 
 const INPUT_FILES_DIR_NAME: &str = "input-files";
 

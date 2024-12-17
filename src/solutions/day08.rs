@@ -1,7 +1,8 @@
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 
-use crate::common::{read_file, Point};
+use crate::common::Point;
+use crate::common::io::read_file;
 
 pub fn run(file_path: &str) -> (i64, i64) {
     let field = read_file(file_path).parse::<Field>().unwrap();

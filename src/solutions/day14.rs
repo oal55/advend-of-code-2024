@@ -2,7 +2,8 @@ use std::{collections::HashMap, sync::LazyLock};
 use std::io::BufRead;
 use regex::Regex;
 
-use crate::common::{file_reader, Point};
+use crate::common::Point;
+use crate::common::io::file_reader;
 
 static LINE_RE: LazyLock<Regex> = LazyLock::new(|| {
     let int_re = r"(-?\d+)";
@@ -40,11 +41,6 @@ pub fn run(file_path: &str) -> (u32, u32) {
         quadrants[i_quant] += num_bots;
     }
 
-    
-
-
-
-
     (quadrants.into_iter().fold(1, |acc, cur| acc * cur), 0) }
 
 fn parse_bots(file_path: &str) -> Vec<Bot> {
@@ -63,10 +59,4 @@ fn parse_line(line: String) -> Bot {
     }
 }
 
-fn part1(file_path: &str) -> i64 {
-    let i = -17;
-    let m = i % 10;
-    return m;
-}
-
-fn part2(file_path: &str) -> i64 { 0 }
+// move the python code here o,o

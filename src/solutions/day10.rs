@@ -1,6 +1,8 @@
-use std::{collections::{HashSet, VecDeque}, io::BufRead};
-use crate::common::{Point, file_reader};
+use std::collections::{HashSet, VecDeque};
+use std::io::BufRead;
 
+use crate::common::Point;
+use crate::common::io::file_reader;
 
 pub fn run(file_path: &str) -> (usize, usize) {
     let field = Field::new_from_file(file_path);

@@ -1,6 +1,6 @@
 use std::io::BufRead;
 
-use crate::common::file_reader;
+use crate::common::io::file_reader;
 
 enum Operator {Add, Mul, Concat}
 

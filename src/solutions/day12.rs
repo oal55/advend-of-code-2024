@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 use std::io::BufRead;
-use crate::common::{file_reader, Point, UNIT_VECTORS};
+
+use crate::common::io::file_reader;
+use crate::common::{Point, UNIT_VECTORS};
 
 #[derive(Debug)]
 struct RegionData {

@@ -1,6 +1,6 @@
 use regex::Regex;
 
-use crate::common::read_file;
+use crate::common::io::read_file;
 
 pub fn run(file_path: &str) -> (i64, i64) { (part1(file_path), part2(file_path)) }
 
