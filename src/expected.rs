@@ -1,8 +1,4 @@
-use std::collections::HashMap;
-use std::sync::LazyLock;
-
-
-pub const SOLUTIONS: LazyLock<HashMap<u32, (&str, &str)>> = LazyLock::new(|| HashMap::from([
+pub const SOLUTIONS: &[(u32, (&str, &str))] = &[
     (1, ("2066446", "24931009")),
     (2, ("421", "476")),
     (3, ("180233229", "95411583")),
@@ -21,4 +17,4 @@ pub const SOLUTIONS: LazyLock<HashMap<u32, (&str, &str)>> = LazyLock::new(|| Has
     (16, ("102488", "559")),
     (17, ("1,2,3,1,3,2,5,3,1", "105706277661082")),
     (18, ("270", "51,40")),
-]));
+];

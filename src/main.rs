@@ -1,4 +1,4 @@
-use std::{env, fs};
+use std::{env, fs, time::{Duration, Instant}};
 use dotenv::dotenv;
 
 mod solutions;
@@ -24,85 +24,83 @@ fn main() {
             if !is_custom {
                 ensure_aoc_input_exists(day);
             }
-            run_day(day, &filepath);
+            let (part1, part2, duration) = run_day(day, &filepath);
+            println!("Day {day}:");
+            print!("  part1: {:width$}", part1, width=18);
+            println!("  part2: {}", part2);
+            println!("  took - {:.2?}", duration);
         }
     }
 }
 
-
 fn run_all_days() {
-    for day in 1..19 {
+    let color = |is_correct: bool| match is_correct {
+        true => "\x1b[0;32m", // green
+        false => "\x1b[0;31m" // red
+    };
+    let expected = |expected_val: &str, was_output_correct: bool| -> Option<(String, bool)> {
+        match was_output_correct {
+            true => None,
+            false => Some((expected_val.to_string(), true))
+        }
+    };
+    let pretty_print = |part1: Option<(String, bool)>, part2: Option<(String, bool)>| {
+        match part1 {
+            Some((res, is_correct)) => print!("  part1: {}{:width$}\x1b[0m", color(is_correct), res, width=18),
+            None => print!("{}", " ".repeat(27))
+        }
+        match part2 {
+            Some((res, is_correct)) => println!("part2: {}{res}\x1b[0m", color(is_correct)),
+            None => println!()
+        }
+    };
+
+    for (day, (expected_part1, expected_part2)) in expected::SOLUTIONS.iter().copied() {
         ensure_aoc_input_exists(day);
-        run_day(day, &aoc_file_path(day));
+        println!("Running day {day}:");
+        let (part1, part2, duration) = run_day(day, &aoc_file_path(day));
+        let part1_correct = part1 == *expected_part1;
+        let part2_correct = part2 == *expected_part2;
+        pretty_print(Some((part1, part1_correct)), Some((part2, part2_correct)));
+        if !part1_correct || !part2_correct {
+            pretty_print(
+                expected(expected_part1, part1_correct),
+                expected(expected_part2, part2_correct)
+            );
+        }
+        println!("  took - {:.2?}", duration);
     }
 }
 
-fn run_day(day: u32, input_file_path: &str) {
+fn run_day(day: u32, input_file_path: &str) -> (String, String, Duration) {
     match day {
-        1 => run(input_file_path, solutions::run_day01, day),
-        2 => run(input_file_path, solutions::run_day02, day),
-        3 => run(input_file_path, solutions::run_day03, day),
-        4 => run(input_file_path, solutions::run_day04, day),
-        5 => run(input_file_path, solutions::run_day05, day),
-        6 => run(input_file_path, solutions::run_day06, day),
-        7 => run(input_file_path, solutions::run_day07, day),
-        8 => run(input_file_path, solutions::run_day08, day),
-        9 => run(input_file_path, solutions::run_day09, day),
-        10 => run(input_file_path, solutions::run_day10, day),
-        11 => run(input_file_path, solutions::run_day11, day),
-        12 => run(input_file_path, solutions::run_day12, day),
-        13 => run(input_file_path, solutions::run_day13, day),
-        14 => run(input_file_path, solutions::run_day14, day),
-        15 => run(input_file_path, solutions::run_day15, day),
-        16 => run(input_file_path, solutions::run_day16, day),
-        17 => run(input_file_path, solutions::run_day17, day),
-        18 => run(input_file_path, solutions::run_day18, day),
+        1 => run(input_file_path, solutions::run_day01),
+        2 => run(input_file_path, solutions::run_day02),
+        3 => run(input_file_path, solutions::run_day03),
+        4 => run(input_file_path, solutions::run_day04),
+        5 => run(input_file_path, solutions::run_day05),
+        6 => run(input_file_path, solutions::run_day06),
+        7 => run(input_file_path, solutions::run_day07),
+        8 => run(input_file_path, solutions::run_day08),
+        9 => run(input_file_path, solutions::run_day09),
+        10 => run(input_file_path, solutions::run_day10),
+        11 => run(input_file_path, solutions::run_day11),
+        12 => run(input_file_path, solutions::run_day12),
+        13 => run(input_file_path, solutions::run_day13),
+        14 => run(input_file_path, solutions::run_day14),
+        15 => run(input_file_path, solutions::run_day15),
+        16 => run(input_file_path, solutions::run_day16),
+        17 => run(input_file_path, solutions::run_day17),
+        18 => run(input_file_path, solutions::run_day18),
         _ => panic!("Having a bad day: {day}")
     }
 }
 
-fn run<T: std::fmt::Display, V: std::fmt::Display>(input_file_path: &str, runnable: SolutionFunction<T, V>, day: u32) {
-    println!("Running day {day}:");
+fn run<T: std::fmt::Display, V: std::fmt::Display>(input_file_path: &str, runnable: SolutionFunction<T, V>) -> (String, String, Duration) {
+    let start = Instant::now();
     let (t_part1, t_part2) = runnable(input_file_path);
-    let pretty_print = |part1_and_color: Option<(&str, &str)>, part2_and_color: Option<(&str, &str)>| {
-        match part1_and_color {
-            Some((res, color)) => print!("  part1: {color}{:width$}\x1b[0m", res, width=18),
-            None => print!("{}", " ".repeat(27))
-        }
-        match part2_and_color {
-            Some((res, color)) => println!("part2: {color}{res}\x1b[0m"),
-            None => println!()
-        }
-    };
-    let color = |is_correct: Option<bool>| match is_correct {
-        Some(true) => "\x1b[0;32m", // green
-        Some(false) => "\x1b[0;31m", // red
-        None => ""
-    };
-
-    let (part1, part2) = (t_part1.to_string(), t_part2.to_string());
-    match expected::SOLUTIONS.get(&day) {
-        Some((e1, e2)) => {
-            let part1_correct = part1 == *e1;
-            let part2_correct = part2 == *e2;
-            pretty_print(
-                Some((&part1, &color(Some(part1_correct)))),
-                Some((&part2, &color(Some(part2_correct))))
-            );
-            if !part1_correct || !part2_correct {
-                let expected_part_1 = match part1_correct {
-                    true => None,
-                    false => Some((*e1, color(Some(true))))
-                };
-                let expected_part_2 = match part2_correct {
-                    true => None,
-                    false => Some((*e2, color(Some(true))))
-                };
-                pretty_print(expected_part_1, expected_part_2);
-            }
-        },
-        None => pretty_print(Some((&part1, &color(None))), Some((&part2, &color(None))))
-    }
+    let elapsed = start.elapsed();
+    (t_part1.to_string(), t_part2.to_string(), elapsed)
 }
 
 fn ensure_aoc_input_exists(day: u32) {
