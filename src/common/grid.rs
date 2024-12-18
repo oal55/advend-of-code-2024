@@ -33,6 +33,7 @@ impl <T: std::cmp::PartialEq>Grid<T> {
         return indices[0];
     }
 
+    #[allow(dead_code)] // Exists for tests
     pub fn get_cells(&self) -> &Vec<Vec<T>> { &self.cells }
 
 }

@@ -57,6 +57,8 @@ fn run_day(day: u32, input_file_path: &str) {
         14 => run(input_file_path, solutions::run_day14, day),
         15 => run(input_file_path, solutions::run_day15, day),
         16 => run(input_file_path, solutions::run_day16, day),
+        17 => run(input_file_path, solutions::run_day17, day),
+        18 => run(input_file_path, solutions::run_day18, day),
         _ => panic!("Having a bad day: {day}")
     }
 }
@@ -64,11 +66,14 @@ fn run_day(day: u32, input_file_path: &str) {
 fn run<T: std::fmt::Display>(input_file_path: &str, runnable: SolutionFunction<T>, day: u32) {
     println!("Running day {day}");
     let (part1, part2) = runnable(input_file_path);
-    println!("  part1: {}", part1);
-    println!("  Part2: {}", part2);
-    if let Some((expected_1, expected_2)) = expected::SOLUTIONS.get(&day) {
-        assert_eq!(part1.to_string(), expected_1.to_string());
-        assert_eq!(part2.to_string(), expected_2.to_string());
+    print!("  part1: {}, part2: {}", part1, part2);
+    match expected::SOLUTIONS.get(&day) {
+        Some((expected_1, expected_2)) => {
+            assert_eq!(part1.to_string(), expected_1.to_string());
+            assert_eq!(part2.to_string(), expected_2.to_string());
+            println!(" -- ✅");
+        }
+        None => println!()
     }
 }
 
