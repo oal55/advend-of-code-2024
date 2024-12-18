@@ -64,30 +64,46 @@ fn run_day(day: u32, input_file_path: &str) {
 fn run<T: std::fmt::Display, V: std::fmt::Display>(input_file_path: &str, runnable: SolutionFunction<T, V>, day: u32) {
     println!("Running day {day}:");
     let (t_part1, t_part2) = runnable(input_file_path);
-    let pretty_print = |part1: &str, part2: &str, is_correct: Option<bool>| {
-        let color = match is_correct {
-            Some(true) => "\x1b[0;32m", // green
-            Some(false) => "\x1b[0;31m", // red
-            None => ""
-        };
-        print!("  part1: {color}{:width$}\x1b[0m", part1, width=18);
-        println!("part2: {color}{part2}\x1b[0m");
+    let pretty_print = |part1_and_color: Option<(&str, &str)>, part2_and_color: Option<(&str, &str)>| {
+        match part1_and_color {
+            Some((res, color)) => print!("  part1: {color}{:width$}\x1b[0m", res, width=18),
+            None => print!("{}", " ".repeat(27))
+        }
+        match part2_and_color {
+            Some((res, color)) => println!("part2: {color}{res}\x1b[0m"),
+            None => println!()
+        }
     };
-    
+    let color = |is_correct: Option<bool>| match is_correct {
+        Some(true) => "\x1b[0;32m", // green
+        Some(false) => "\x1b[0;31m", // red
+        None => ""
+    };
+
     let (part1, part2) = (t_part1.to_string(), t_part2.to_string());
     match expected::SOLUTIONS.get(&day) {
         Some((e1, e2)) => {
-            let is_correct = part1 == *e1 && part2 == *e2;
-            pretty_print(&part1,&part2,Some(is_correct));
-            if !is_correct {
-                pretty_print(e1,e2,Some(true))
+            let part1_correct = part1 == *e1;
+            let part2_correct = part2 == *e2;
+            pretty_print(
+                Some((&part1, &color(Some(part1_correct)))),
+                Some((&part2, &color(Some(part2_correct))))
+            );
+            if !part1_correct || !part2_correct {
+                let expected_part_1 = match part1_correct {
+                    true => None,
+                    false => Some((*e1, color(Some(true))))
+                };
+                let expected_part_2 = match part2_correct {
+                    true => None,
+                    false => Some((*e2, color(Some(true))))
+                };
+                pretty_print(expected_part_1, expected_part_2);
             }
         },
-        None => pretty_print(&part1, &part2, None)
+        None => pretty_print(Some((&part1, &color(None))), Some((&part2, &color(None))))
     }
 }
-
-
 
 fn ensure_aoc_input_exists(day: u32) {
     let relative_filepath = aoc_file_path(day);
