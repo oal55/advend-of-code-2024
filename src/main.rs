@@ -1,39 +1,37 @@
 use std::{env, fs};
 use dotenv::dotenv;
 
-
 mod solutions;
 mod common;
 mod expected;
 
 const INPUT_FILES_DIR_NAME: &str = "input-files";
 
+enum AocArgs {
+    RunAll,
+    RunDay(u32, String, bool) // (day_num, filepath, is_custom_input)
+}
 
-type SolutionFunction<T> = fn(filename: &str) -> (T, T);
+type SolutionFunction<T, V> = fn(filename: &str) -> (T, V);
 
 fn main() {
     dotenv().ok();
 
-    let args: Vec<String> = env::args().collect();
-    if args[1].as_str() == "all" {
-        return run_all_days();
+    let args = AocArgs::new_from_args();
+    match args {
+        AocArgs::RunAll => run_all_days(),
+        AocArgs::RunDay(day, filepath, is_custom) => {
+            if !is_custom {
+                ensure_aoc_input_exists(day);
+            }
+            run_day(day, &filepath);
+        }
     }
-
-    let day = args[1].as_str().parse::<u32>().expect("Malformed day argument.");
-    let custom_file_arg = args.get(2);
-    if custom_file_arg.is_none() {
-        ensure_aoc_input_exists(day);
-    }
-    
-    let input_file_path = match custom_file_arg {
-        Some(filepath) => filepath.to_string(),
-        None => aoc_file_path(day)
-    };
-    run_day(day, &input_file_path);
 }
 
+
 fn run_all_days() {
-    for day in 1..15 {
+    for day in 1..19 {
         ensure_aoc_input_exists(day);
         run_day(day, &aoc_file_path(day));
     }
@@ -63,21 +61,33 @@ fn run_day(day: u32, input_file_path: &str) {
     }
 }
 
-fn run<T: std::fmt::Display>(input_file_path: &str, runnable: SolutionFunction<T>, day: u32) {
-    println!("Running day {day}");
-    let (part1, part2) = runnable(input_file_path);
-    print!("  part1: {}, part2: {}", part1, part2);
+fn run<T: std::fmt::Display, V: std::fmt::Display>(input_file_path: &str, runnable: SolutionFunction<T, V>, day: u32) {
+    println!("Running day {day}:");
+    let (t_part1, t_part2) = runnable(input_file_path);
+    let pretty_print = |part1: &str, part2: &str, is_correct: Option<bool>| {
+        let color = match is_correct {
+            Some(true) => "\x1b[0;32m", // green
+            Some(false) => "\x1b[0;31m", // red
+            None => ""
+        };
+        print!("  part1: {color}{:width$}\x1b[0m", part1, width=18);
+        println!("part2: {color}{part2}\x1b[0m");
+    };
+    
+    let (part1, part2) = (t_part1.to_string(), t_part2.to_string());
     match expected::SOLUTIONS.get(&day) {
-        Some((expected_1, expected_2)) => {
-            assert_eq!(part1.to_string(), expected_1.to_string());
-            assert_eq!(part2.to_string(), expected_2.to_string());
-            println!(" -- ✅");
-        }
-        None => println!()
+        Some((e1, e2)) => {
+            let is_correct = part1 == *e1 && part2 == *e2;
+            pretty_print(&part1,&part2,Some(is_correct));
+            if !is_correct {
+                pretty_print(e1,e2,Some(true))
+            }
+        },
+        None => pretty_print(&part1, &part2, None)
     }
 }
 
-fn aoc_file_path(day: u32) -> String { format!("{INPUT_FILES_DIR_NAME}/day{:0>2}.txt", day) }
+
 
 fn ensure_aoc_input_exists(day: u32) {
     let relative_filepath = aoc_file_path(day);
@@ -95,4 +105,22 @@ fn ensure_aoc_input_exists(day: u32) {
         .expect("Expected better things from reqwest");
     let contents = response.text().expect("Cannot read response text");
     fs::write(relative_filepath, &contents).expect("Cannot write file.");
+}
+
+fn aoc_file_path(day: u32) -> String { format!("{INPUT_FILES_DIR_NAME}/day{:0>2}.txt", day) }
+
+impl AocArgs {
+    fn new_from_args() -> Self {
+        let args: Vec<String> = env::args().collect();
+        if args[1].as_str() == "all" {
+            return Self::RunAll;
+        }
+
+        let day = args[1].as_str().parse::<u32>().expect("Malformed day argument.");
+        let (filepath, is_custom) = match args.get(2) {
+            Some(path) => (path.to_string(), false),
+            None => (aoc_file_path(day), true)
+        };
+        Self::RunDay(day, filepath, is_custom)
+    }
 }
