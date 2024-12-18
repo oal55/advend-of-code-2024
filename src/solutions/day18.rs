@@ -82,7 +82,7 @@ struct UnionFind {
 impl UnionFind {
     fn new(n: usize) -> Self{
         UnionFind{
-            size:vec![1; n as usize],
+            size:vec![1; n],
             group: (0..n).collect::<Vec<_>>(),
         }
     }
@@ -109,7 +109,7 @@ impl UnionFind {
             self.group[p] = parents_group;
             p = parents_group;
         }
-        return p;
+        p
     }
 }
 

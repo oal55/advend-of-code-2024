@@ -23,7 +23,7 @@ pub fn run(file_path: &str) -> (String, String) {
 
 fn execute_instruction(state: &mut State, inst: &Instruction, i_instr: usize) -> usize {
     match inst.id {
-        0 => state.a = state.a / (1 << combo(state, inst.arg)),
+        0 => state.a /= 1 << combo(state, inst.arg),
         1 => state.b ^= inst.arg,
         2 => state.b = combo(state, inst.arg) % 8,
         3 => {
@@ -31,7 +31,7 @@ fn execute_instruction(state: &mut State, inst: &Instruction, i_instr: usize) ->
                 return inst.arg as usize;
             }
         },
-        4 => state.b = state.b ^ state.c,
+        4 => state.b ^= state.c,
         5 => state.outputs.push((combo(state, inst.arg) % 8).to_string()),
         6 => state.b = state.a / (1 << combo(state, inst.arg)),
         7 => state.c = state.a / (1 << combo(state, inst.arg)),
@@ -42,7 +42,7 @@ fn execute_instruction(state: &mut State, inst: &Instruction, i_instr: usize) ->
 
 fn combo(state: &State, arg: i32) -> i32 {
     match arg {
-        0 | 1 | 2 | 3 => return arg,
+        0..=3 => arg,
         4 => state.a,
         5 => state.b,
         6 => state.c,
