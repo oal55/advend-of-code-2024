@@ -48,7 +48,7 @@ fn walk_out_of_grid(grid: &Grid<char>, start: &Point) -> HashMap<Point, Point> {
     let mut seen_points: HashMap<Point, Point> = HashMap::new(); // coord -> dir
 
     loop {
-        seen_points.insert(cur, direction); // this clone necessary?
+        seen_points.insert(cur, direction);
         
         let maybe_next = cur.step(&direction);
         if !grid.contains(&maybe_next) {
