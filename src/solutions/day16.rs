@@ -4,7 +4,7 @@ use std::cmp::Ordering;
 use std::io::BufRead;
 use std::ops::Range;
 
-use crate::common::{Point, UNIT_VECTORS};
+use crate::common::{Point, Direction};
 use crate::common::io::file_reader;
 
 pub fn run(file_path: &str) -> (u64, u64) {
@@ -63,7 +63,7 @@ fn calc(graph: &DirectedGraph, p_start: &Point, p_end: &Point) -> (u64, u64) {
 
     let empty_set = HashSet::new();
     let mut seen_points: HashSet<Point> = HashSet::new();
-    let mut queue = VecDeque::from_iter(UNIT_VECTORS.iter().map(|dir| Node{dir: *dir, coords: *p_end}));
+    let mut queue = VecDeque::from_iter(Direction::ORTHOGONAL_DIRS.iter().map(|dir| Node{dir: *dir, coords: *p_end}));
     while !queue.is_empty() {
         let node = queue.pop_front().unwrap();
         seen_points.insert(node.coords);

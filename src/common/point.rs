@@ -7,25 +7,47 @@ pub struct Point {
     pub j: i32
 }
 
-pub const UNIT_VECTORS: [Point; 4] = [Point{i:1, j:0},Point{i:0, j:1},Point{i:-1, j:0},Point{i:0, j:-1}];
-
 pub struct Direction;
 impl Direction {
-    pub const UP: Point = UNIT_VECTORS[2];
-    pub const RIGHT: Point = UNIT_VECTORS[1];
-    pub const DOWN: Point = UNIT_VECTORS[0];
-    pub const LEFT: Point = UNIT_VECTORS[3];
+    pub const UP: Point     = Point{i:-1, j:0};
+    pub const RIGHT: Point  = Point{i:0, j:1};
+    pub const DOWN: Point   = Point{i:1, j:0};
+    pub const LEFT: Point   = Point{i:0, j:-1};
+    pub const UP_RIGHT: Point = Point{i: -1, j: 1};
+    pub const UP_LEFT: Point = Point{i: -1, j: -1};
+    pub const DOWN_RIGHT: Point = Point{i: 1, j: 1};
+    pub const DOWN_LEFT: Point = Point{i: 1, j: -1};
+
+    // Orthogonal 4 dirs. Top, right, down, left.
+    pub const ORTHOGONAL_DIRS: [Point; 4] = [
+        Direction::UP,
+        Direction::RIGHT,
+        Direction::DOWN,
+        Direction::LEFT,
+    ];
+
+    pub const ALL_DIRS: [Point; 8] = [
+        Direction::UP,
+        Direction::UP_RIGHT,
+        Direction::RIGHT,
+        Direction::DOWN_RIGHT,
+        Direction::DOWN,
+        Direction::DOWN_LEFT,
+        Direction::LEFT,
+        Direction::UP_LEFT,
+    ];
 }
 
+
 impl Point {
+    pub fn new(i: i32, j: i32) -> Self { Point{i, j} }
+
     pub fn rotate_clockwise(&mut self) { (self.i, self.j) = (self.j, -self.i); }
 
     pub fn rotated_clockwise(&self)   -> Point { Point{i:self.j, j:-self.i} }
     pub fn rotated_widdershins(&self) -> Point { Point{i:-self.j, j:self.i} }
-
-    pub fn step(&self, dir: &Point) -> Point { Point{i: self.i + dir.i, j: self.j + dir.j} }
-    
-    pub fn times(&self, scalar: i32) -> Point { Point{i: self.i*scalar, j: self.j*scalar} }
+    pub fn step(&self, dir: &Point)   -> Point { Point{i: self.i + dir.i, j: self.j + dir.j} }
+    pub fn times(&self, scalar: i32)  -> Point { Point{i: self.i*scalar, j: self.j*scalar} }
 
     pub fn neighbors(&self) -> Vec<Point> {
         vec![

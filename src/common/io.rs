@@ -10,7 +10,7 @@ pub fn read_file(file_path: &str) -> String {
     fs::read_to_string(file_path).unwrap_or_else(|_| panic!("Cannot read file at: {}", file_path))
 }
 
-pub fn read_chars_grid(file_path: &str) -> Vec<Vec<char>> {
+pub fn read_file_as_2d_chars(file_path: &str) -> Vec<Vec<char>> {
     file_reader(file_path).lines()
         .map(|line| line.unwrap().chars().collect())
         .collect()

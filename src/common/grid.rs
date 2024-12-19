@@ -2,8 +2,8 @@ use super::point::Point;
 
 pub struct Grid<T> {
     cells: Vec<Vec<T>>,
-    num_rows: i32,
-    num_cols: i32,
+    pub num_rows: i32,
+    pub num_cols: i32,
 }
 
 impl <T: std::cmp::PartialEq>Grid<T> {
