@@ -26,8 +26,7 @@ fn main() {
             }
             let (part1, part2, duration) = run_day(day, &filepath);
             println!("Day {day}:");
-            print!("  part1: {:width$}", part1, width=18);
-            println!("  part2: {}", part2);
+            println!("  part1: {:width$}  part2: {}", part1, part2, width=18);
             println!("  took - {:.2?}", duration);
         }
     }
@@ -92,6 +91,7 @@ fn run_day(day: u32, input_file_path: &str) -> (String, String, Duration) {
         16 => run(input_file_path, solutions::run_day16),
         17 => run(input_file_path, solutions::run_day17),
         18 => run(input_file_path, solutions::run_day18),
+        19 => run(input_file_path, solutions::run_day19),
         _ => panic!("Having a bad day: {day}")
     }
 }
