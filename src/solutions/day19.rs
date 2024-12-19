@@ -5,8 +5,8 @@ pub fn run(file_path: &str) -> (u64, u64) {
     let (patterns, towel_rows) = parse_input(file_path);
 
     towel_rows.iter()
-        .map(|row|num_ways_to_organize(&patterns, row))
-        .fold((0, 0),|(part1, part2), n_ways| (part1 + (n_ways > 0) as u64, part2 + n_ways))
+        .map(|row| num_ways_to_organize(&patterns, row))
+        .fold((0, 0), |(part1, part2), n_ways| (part1 + (n_ways > 0) as u64, part2 + n_ways))
 }
 
 fn num_ways_to_organize(patterns: &Vec<Vec<char>>, row: &Vec<char>) -> u64 {
