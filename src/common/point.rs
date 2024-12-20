@@ -40,14 +40,19 @@ impl Direction {
 
 
 impl Point {
-    pub fn new(i: i32, j: i32) -> Self { Point{i, j} }
+    pub fn new(i: i32, j: i32) -> Self { Self{i, j} }
 
     pub fn rotate_clockwise(&mut self) { (self.i, self.j) = (self.j, -self.i); }
 
-    pub fn rotated_clockwise(&self)   -> Point { Point{i:self.j, j:-self.i} }
-    pub fn rotated_widdershins(&self) -> Point { Point{i:-self.j, j:self.i} }
-    pub fn step(&self, dir: &Point)   -> Point { Point{i: self.i + dir.i, j: self.j + dir.j} }
-    pub fn times(&self, scalar: i32)  -> Point { Point{i: self.i*scalar, j: self.j*scalar} }
+    pub fn rotated_clockwise(&self) -> Self { Self{i:self.j, j:-self.i} }
+
+    pub fn rotated_widdershins(&self) -> Self { Self{i:-self.j, j:self.i} }
+
+    pub fn step(&self, dir: &Self) -> Self { Self{i: self.i + dir.i, j: self.j + dir.j} }
+
+    pub fn times(&self, scalar: i32) -> Self { Self{i: self.i*scalar, j: self.j*scalar} }
+
+    pub fn d_manhattan(&self, other: &Self) -> i32 { (self.i - other.i).abs() + (self.j - other.j).abs() }
 
     pub fn neighbors(&self) -> Vec<Point> {
         vec![
