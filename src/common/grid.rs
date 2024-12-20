@@ -25,6 +25,15 @@ impl <T: std::cmp::PartialEq>Grid<T> {
             .collect()
     }
 
+    pub fn find_func(&self, include: fn(&T) -> bool) -> Vec<Point> {
+        self.cells.iter().enumerate()
+            .flat_map(|(i, row)| row.iter().enumerate()
+                .filter(|(_, val)| include(val))
+                .map(move |(j, _)| Point{i: i as i32, j: j as i32})
+            )
+            .collect()
+    }
+
     pub fn find_single(&self, target_val: &T) -> Point {
         let indices = self.find(target_val);
         if indices.len() != 1 {
