@@ -17,9 +17,6 @@ pub fn run(file_path: &str) -> (i64, usize) {
     }
     let max_bananas = seen_seqs.values().max().unwrap();
 
-    assert_eq!(*max_bananas, 1628);
-    assert_eq!(sum_2k_iter, 14392541715);
-
     (sum_2k_iter, *max_bananas as usize)
 }
 
