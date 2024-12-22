@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io::BufRead};
+use std::io::BufRead;
 use crate::common::io::file_reader;
 
 const MOD: i64 = 16777216;
@@ -8,39 +8,54 @@ pub fn run(file_path: &str) -> (i64, usize) {
     let seeds = file_reader(file_path).lines().into_iter()
         .map(|l| l.unwrap().parse::<i64>().unwrap())
         .collect::<Vec<_>>();
-    let mut seen_seqs: HashMap<u32, u32> = HashMap::new();
+    
+    let mut seen_seqs = vec![0; 130321]; // 19 ^ 4. "Diffs" have to be in range [-9, 9] -> 19 possible values
     let mut sum_2k_iter = 0i64;
     for seed in seeds {
-        let (res, seqs) = dumber_2000(seed);
+        let (res, seqs, good_indices) = dumber_2000(seed);
         sum_2k_iter += res;
-        seqs.iter().for_each(|(&k, &v)| *seen_seqs.entry(k).or_default() += v);
+        for i in good_indices {
+            seen_seqs[i] += seqs[i];
+        }
     }
-    let max_bananas = seen_seqs.values().max().unwrap();
+    let max_bananas = seen_seqs.iter().max().unwrap();
 
     (sum_2k_iter, *max_bananas as usize)
 }
 
-fn dumber_2000(start: i64) -> (i64, HashMap<u32, u32>) {
+fn dumber_2000(start: i64) -> (i64, Vec<i32>, Vec<usize>) {
     let mask = 0x00_FF_FF_FF; // Fs for fml.
 
-    let mut seen_seqs = HashMap::new();
+    let mut seen_seqs = vec![-1; 130321];
+    let mut good_indices = Vec::with_capacity(2000);
     let mut res = start;
     let mut diffs = 0u32;
     for _ in 0..3 {
         let next_res = next(res);
-        let diff = (next_res % 10 - res % 10) as u8;
+        let diff = ((next_res % 10 - res % 10) + 9) as u8; // this is never negative.
         diffs = ((mask & diffs) << 8) | (diff as u32);
         res = next_res;
     }
 
     for _ in 3..2000 {
         let next_res = next(res);
-        let diff = (next_res % 10 - res % 10) as u8;
+        let diff = ((next_res % 10 - res % 10) + 9) as u8;
         diffs = ((mask & diffs) << 8) | (diff as u32);
         res = next_res;
-        seen_seqs.entry(diffs).or_insert_with(|| (res % 10) as u32); 
+
+        let i_seq = (
+            (diffs & 0xFF) +
+            19 * ((diffs & 0xFF00) >> 8) +
+            19 * 19 * ((diffs & 0xFF0000) >> 16) +
+            19 * 19 * 19 * ((diffs & 0xFF000000) >> 24)
+        ) as usize;
+
+        if seen_seqs[i_seq] == -1 {
+            good_indices.push(i_seq);
+            seen_seqs[i_seq] = (res % 10) as i32;
+        }
     }
-    (res, seen_seqs)
+    (res, seen_seqs, good_indices)
 }
 
 fn next(mut secret: i64) -> i64 {
