@@ -93,6 +93,7 @@ fn run_day(day: u32, input_file_path: &str) -> (String, String, Duration) {
         18 => run(input_file_path, solutions::run_day18),
         19 => run(input_file_path, solutions::run_day19),
         20 => run(input_file_path, solutions::run_day20),
+        22 => run(input_file_path, solutions::run_day22),
         _ => panic!("Having a bad day: {day}")
     }
 }
