@@ -7,3 +7,9 @@ edition = "2021"
 regex = "1.11.1"
 reqwest = { version = "0.12", features = ["blocking"] }
 dotenv = "0.15"
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
