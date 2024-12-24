@@ -1,4 +1,5 @@
-use std::{collections::{BTreeSet, HashMap, HashSet}, io::BufRead};
+use std::collections::{HashMap, HashSet};
+use std::io::BufRead;
 use crate::common::io::file_reader;
 
 pub fn run(file_path: &str) -> (usize, String) {
@@ -10,7 +11,10 @@ pub fn run(file_path: &str) -> (usize, String) {
     let cliques = cliques_3(&adj_list);
     
 
-    let t_nodes = node_mapping.iter().filter(|(k, v)| v.starts_with("t")).map(|(k, v)| k).collect::<HashSet<_>>();
+    let t_nodes = node_mapping.iter()
+        .filter(|(_, v)| v.starts_with("t"))
+        .map(|(k, _)| k)
+        .collect::<HashSet<_>>();
     let part1 = cliques.iter().filter(|c| c.iter().any(|node| t_nodes.contains(node))).count();
 
     let mut cur_set = cliques.clone();
