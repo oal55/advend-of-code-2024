@@ -82,13 +82,13 @@ fn run_program(state: &mut State, instructions: &[Instruction]) -> Vec<i64> {
 }
 
 fn parse_inputs(file_path: &str) -> (State, Vec<i64>) {
-    let mut lines = file_reader(file_path).lines();
-    let a = extract_register_value(&lines.next().unwrap().unwrap());
-    let b = extract_register_value(&lines.next().unwrap().unwrap());
-    let c = extract_register_value(&lines.next().unwrap().unwrap());
+    let mut lines = file_reader(file_path).lines().map(Result::unwrap);
+    let a = extract_register_value(&lines.next().unwrap());
+    let b = extract_register_value(&lines.next().unwrap());
+    let c = extract_register_value(&lines.next().unwrap());
     
-    lines.next().unwrap().unwrap();
-    let program = lines.next().unwrap().unwrap();
+    lines.next().unwrap();
+    let program = lines.next().unwrap();
     let (_, raw_instructions) = program.split_once(": ").unwrap();
 
     let state = State{a, b, c};

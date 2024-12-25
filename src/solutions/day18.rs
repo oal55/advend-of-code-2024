@@ -9,7 +9,10 @@ const SIZE_N: i32 = 71;
 // const SIZE_N: i32 = 7;
 
 pub fn run(file_path: &str) -> (String, String) {
-    let coordinates = parse_points(file_path);
+    let coordinates = file_reader(file_path).lines()
+        .map(|l| l.unwrap())
+        .map(parse_point)
+        .collect::<Vec<_>>();
 
     (
         part1(&coordinates).to_string(),
@@ -17,17 +20,12 @@ pub fn run(file_path: &str) -> (String, String) {
     )
 }
 
-fn parse_points(file_path: &str) -> Vec<Point> {
-    file_reader(file_path).lines()
-        .map(|l| l.unwrap())
-        .map(|l| {
-            let (fi, se) = l.split_once(",").unwrap();
-            Point{
-                j:fi.parse::<i32>().unwrap(),
-                i:se.parse::<i32>().unwrap()
-            }
-        })
-        .collect::<Vec<_>>()
+fn parse_point(line: String) -> Point {
+    let (fi, se) = line.split_once(",").unwrap();
+    Point{
+        i:se.parse::<i32>().unwrap(),
+        j:fi.parse::<i32>().unwrap()
+    }
 }
 
 struct UnweightedGraph {

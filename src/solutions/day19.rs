@@ -23,16 +23,16 @@ fn num_ways_to_organize(patterns: &Vec<Vec<char>>, row: &Vec<char>) -> u64 {
 }
 
 fn parse_input(file_path: &str) -> (Vec<Vec<char>>, Vec<Vec<char>>) {
-    let mut lines = file_reader(file_path).lines();
+    let mut lines = file_reader(file_path).lines().map(Result::unwrap);
 
-    let patterns = lines.next().unwrap().unwrap()
+    let patterns = lines.next().unwrap()
         .split(", ")
         .map(|p| p.chars().collect())
         .collect();
 
-    lines.next().unwrap().unwrap(); // second line's empty for some reason
+    lines.next().unwrap(); // second line's empty for some reason
 
-    let towel_rows = lines.map(|l| l.unwrap().chars().collect()).collect();
+    let towel_rows = lines.map(|l| l.chars().collect()).collect();
 
     (patterns, towel_rows)
 }

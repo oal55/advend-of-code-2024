@@ -1,16 +1,13 @@
 use core::panic;
 use std::collections::{BinaryHeap, HashMap, HashSet, VecDeque};
 use std::cmp::Ordering;
-use std::io::BufRead;
 use std::ops::Range;
 
 use crate::common::{Point, Direction};
-use crate::common::io::file_reader;
+use crate::common::io::read_file_as_2d_chars;
 
 pub fn run(file_path: &str) -> (u64, u64) {
-    let chars: Vec<Vec<char>> = file_reader(file_path).lines()
-        .map(|line| line.unwrap().chars().collect())
-        .collect();
+    let chars: Vec<Vec<char>> = read_file_as_2d_chars(file_path);
 
     let p_start = find(&chars, 'S');
     let p_end = find(&chars, 'E');
