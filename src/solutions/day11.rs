@@ -12,7 +12,6 @@ static TENS_POWERS: LazyLock<Vec<u64>> = LazyLock::new(|| {
 });
 
 pub fn run(file_path: &str) -> (u64, u64) {
-
     let stones = read_file(file_path)
         .split_ascii_whitespace()
         .map(|num| num.parse::<u64>().unwrap_or_else(|_| panic!("Unable to parse: {num}")))
@@ -21,9 +20,8 @@ pub fn run(file_path: &str) -> (u64, u64) {
             acc
         });
 
-    
     let blink_25 = (0..25).fold(stones.clone(), |cur_stones, _| blink(cur_stones));
-    let blink_75 = (0..75).fold(stones.clone(), |cur_stones, _| blink(cur_stones));
+    let blink_75 = (25..75).fold(blink_25.clone(), |cur_stones, _| blink(cur_stones));
 
     (
         blink_25.values().sum(),
@@ -48,6 +46,5 @@ fn blink(stones: HashMap<u64, u64>) -> HashMap<u64, u64> {
             *res.entry(number*2024).or_default() += count;
         }
     }
-    // println!("res: {:?}", res);
     res
 }

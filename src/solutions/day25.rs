@@ -29,8 +29,8 @@ fn parse_schematic(stanza: &str) -> Schematic {
         '\n' | '\r' => res, // ignore new lines
         _ => panic!("Unexpected char: {c}")
     });
-    if is_lock {
-        return  Schematic::Lock(num);
+    match is_lock {
+        true => Schematic::Lock(num),
+        false => Schematic::Key(num)
     }
-    Schematic::Key(num)
 }

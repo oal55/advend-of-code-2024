@@ -1,9 +1,8 @@
 use std::{collections::HashMap, sync::LazyLock};
-use std::io::BufRead;
 use regex::Regex;
 
 use crate::common::Point;
-use crate::common::io::file_reader;
+use crate::common::io::read_file;
 
 static LINE_RE: LazyLock<Regex> = LazyLock::new(|| {
     let int_re = r"(-?\d+)";
@@ -22,7 +21,7 @@ struct Bot {
 
 fn into_bounds(n: i32, size: i32) -> i32 { (n % size + size) % size } // shenanigans because (-17 % 10 == -7) in rust
 pub fn run(file_path: &str) -> (u32, u32) {
-    let bots = parse_bots(file_path);
+    let bots = read_file(file_path).lines().map(parse_bot).collect::<Vec<_>>();
 
     let mut pos_to_count: HashMap<Point, u32> = HashMap::new();
     for bot in bots {
@@ -43,13 +42,7 @@ pub fn run(file_path: &str) -> (u32, u32) {
 
     (quadrants.into_iter().product::<u32>(), 0) }
 
-fn parse_bots(file_path: &str) -> Vec<Bot> {
-    file_reader(file_path).lines()
-        .map(|line| parse_line(line.unwrap()))
-        .collect()
-}
-
-fn parse_line(line: String) -> Bot {
+fn parse_bot(line: &str) -> Bot {
     let (_, [px,py,vx,vy]) = LINE_RE.captures(&line)
         .unwrap_or_else(|| panic!("Re doesn't match line: {line}"))
         .extract();

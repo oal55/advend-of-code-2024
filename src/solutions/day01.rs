@@ -1,31 +1,33 @@
 use std::collections::HashMap;
 use std::io::BufRead;
+use std::iter::zip;
 
 use crate::common::io::file_reader;
 
-pub fn run(file_path: &str) -> (i64, i64) {
-    let mut nums_fi: Vec<i64> = Vec::new();
-    let mut nums_se: Vec<i64> = Vec::new();
-    let mut freq: HashMap<i64, i64> = HashMap::new();
-
-    for line in file_reader(file_path).lines().map(Result::unwrap) {
-        let (fi, se) = parse_line(line);
-        nums_fi.push(fi);
-        nums_se.push(se);
-        *freq.entry(se).or_default() += 1;
-    }
+pub fn run(file_path: &str) -> (i64, i64) {    
+    let (mut nums_fi, mut nums_se): (Vec<_>, Vec<_>) = file_reader(file_path).lines()
+        .map(Result::unwrap)
+        .map(parse_line)
+        .unzip();
 
     nums_fi.sort();
     nums_se.sort();
 
-    let part1 = nums_fi.iter().zip(nums_se.iter())
+    let freq: HashMap<i64, i64> = nums_se.iter().fold(
+        HashMap::new(),
+        |mut m, &num| {
+                *m.entry(num).or_insert(0) += 1;
+                m
+        }
+    );
+
+    let part1 = zip(nums_fi.iter(), nums_se.iter())
         .map(|(p, q)| (p - q).abs())
         .sum();
     let part2 = nums_fi.iter()
         .map(|p| p * freq.get(p).unwrap_or(&0))
         .sum();
     (part1, part2)
-        
 }
 
 fn parse_line(line: String) -> (i64, i64) {
