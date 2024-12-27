@@ -2,43 +2,28 @@ use regex::Regex;
 
 use crate::common::io::read_file;
 
-pub fn run(file_path: &str) -> (i64, i64) { (part1(file_path), part2(file_path)) }
-
 const MUL_RE: &str = r"mul\((-?\d{1,3}),(-?\d{1,3})\)";
 const TOGGLE_RE: &str = r"(do\(\)|don't\(\))";
 
-fn part1(file_path: &str) -> i64 {
-    let re = Regex::new(MUL_RE).unwrap();
-    let file_content = read_file(file_path);
+pub fn run(file_path: &str) -> (i64, i64) {
+    let mut part1 = 0;
+    let mut part2 = 0;
 
-    let mut res: i64 = 0;
-    for (_, [fi, se]) in re.captures_iter(&file_content).map(|c| c.extract()) {
-        let p = fi.parse::<i64>().unwrap();
-        let q = se.parse::<i64>().unwrap();
-        res += p*q;
-    }
-    res
-}
-
-fn part2(file_path: &str) -> i64 {
     let re = Regex::new(format!("{MUL_RE}|{TOGGLE_RE}").as_str()).unwrap();
-    let file_content = read_file(file_path);
-
     let mut enabled = true;
-    let mut res: i64 = 0;
-    for c in re.captures_iter(&file_content) {
+    re.captures_iter(&read_file(file_path)).for_each(|c| {
         match c.get(0).unwrap().as_str() {
             "do()" => enabled = true,
             "don't()" => enabled = false,
             _ => {
-                if enabled {
-                    let (fi, se) = (c.get(1).unwrap().as_str(), c.get(2).unwrap().as_str());
-                    let p = fi.parse::<i64>().unwrap();
-                    let q = se.parse::<i64>().unwrap();
-                    res += p*q;
-                }
+                let (fi, se) = (c.get(1).unwrap().as_str(), c.get(2).unwrap().as_str());
+                let p = fi.parse::<i64>().unwrap();
+                let q = se.parse::<i64>().unwrap();
+                part1 += p*q;
+                enabled.then(|| part2 += p*q);
             }
         }
-    }
-    res
+    });
+
+    (part1, part2)
 }
