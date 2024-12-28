@@ -1,82 +1,50 @@
-use std::collections::HashMap;
+use std::cmp::Ordering;
 use std::io::BufRead;
 
 use crate::common::io::file_reader;
 
-const EMPTY_VEC: Vec<i64> = Vec::new(); // fml.
-
-pub fn run(file_path: &str) -> (i64, i64) { (part1(file_path), part2(file_path)) }
-
-fn part1(file_path: &str) -> i64 {
+pub fn run(file_path: &str) -> (u32, u32) {
     let (dependencies, sequences) = read_things(file_path);
 
-    sequences.iter()
-        .filter(|&s| in_order(&dependencies, s))
-        .map(middle)
-        .sum()
-}
+    let mut part1 = 0;
+    let mut part2 = 0;
 
-fn part2(file_path: &str) -> i64 {
-    let (dependencies, sequences) = read_things(file_path);
-
-    sequences.iter()
-        .filter(|&s| !in_order(&dependencies, s))
-        .map(|sequence| {
-            let indegrees = build_indegrees(&dependencies, sequence);
-            let mut res = sequence.clone();
-            res.sort_by_key(|num| indegrees.get(num).unwrap_or(&0));
-            middle(&res)
-        })
-        .sum()
-}
-
-fn in_order(dependencies: &HashMap<i64, Vec<i64>>, sequence: &Vec<i64>) -> bool {
-    let mut indegrees = build_indegrees(dependencies, sequence);
-    for num in sequence {
-        if *indegrees.get(num).unwrap_or(&0) != 0 {
-            return false;
+    let topo_order = |a: &u32, b: &u32| ->  Ordering {
+        match (dependencies[*a as usize][*b as usize], dependencies[*b as usize][*a as usize]) {
+            (false, false) => Ordering::Equal,
+            (false, true) => Ordering::Greater,
+            (true, false) => Ordering::Less,
+            (true, true) => panic!("Bad dependencies"),
         }
-        for dst in dependencies.get(num).unwrap_or(&EMPTY_VEC) {
-            if indegrees.contains_key(dst) {
-                *indegrees.get_mut(dst).unwrap() -= 1;
-            }
+    };
+
+    for mut seq in sequences {
+        if seq.is_sorted_by(|a ,b| topo_order(a, b) != Ordering::Greater) {
+            part1 += middle(&seq);
+        } else {
+            seq.sort_by(topo_order);
+            part2 += middle(&seq);
         }
     }
-    true
+
+    (part1, part2)
 }
 
-fn build_indegrees(dependencies: &HashMap<i64, Vec<i64>>, sequence: &Vec<i64>) -> HashMap<i64, i64> {
-    let mut indegrees = HashMap::new();
-    for src in sequence {
-        for dst in dependencies.get(src).unwrap_or(&EMPTY_VEC) {
-            if sequence.contains(dst) {
-                *indegrees.entry(*dst).or_insert(0) += 1
-            }
-        }
-    }
-    indegrees
-}
+#[inline]
+fn middle(vec: &Vec<u32>) -> u32 { vec[vec.len()/2] }
 
-fn read_things(file_path: &str) -> (HashMap<i64, Vec<i64>>, Vec<Vec<i64>>) {
-    let mut it = file_reader(file_path).lines();
-    
-    let mut by_dependency = HashMap::new(); // pre-req -> [downstream, things]
+fn read_things(file_path: &str) -> ([[bool; 100]; 100], Vec<Vec<u32>>) {
+    let mut dependencies: [[bool; 100]; 100] = [[false; 100]; 100]; // dep[a][b] == true iff a has to come before b
+    let mut it = file_reader(file_path).lines().map(Result::unwrap);
+
     it.by_ref()
-        .map(|line| line.unwrap())
         .take_while(|line| !line.is_empty())
         .for_each(|line| {
             let (fi, se) = line.split_once("|").unwrap_or_else(|| panic!("Cannot split line {}", line));
-            by_dependency.entry(into_i64(fi)).or_insert_with(Vec::new).push(into_i64(se));
+            dependencies[fi.parse::<usize>().unwrap()][se.parse::<usize>().unwrap()] = true;
         });
-    
-    let sequences = it.map(|line| line.unwrap())
-        .map(|line| line.split(",").map(into_i64).collect())
-        .collect();
 
-    (by_dependency, sequences)
+    let sequences = it.map(|line| line.split(",").map(|n| n.parse().unwrap()).collect()).collect();
+
+    (dependencies, sequences)
 }
-
-#[inline]
-fn into_i64(num: &str) -> i64 { num.parse().unwrap() }
-#[inline]
-fn middle(vec: &Vec<i64>) -> i64 { vec[vec.len()/2] }
