@@ -1,5 +1,6 @@
 use std::{env, fs, time::{Duration, Instant}};
 use dotenv::dotenv;
+use solutions::get_solution_function;
 
 mod solutions;
 mod common;
@@ -12,8 +13,6 @@ enum AocArgs {
     RunDay(u32, String, bool) // (day_num, filepath, is_custom_input)
 }
 
-type SolutionFunction<T, V> = fn(filename: &str) -> (T, V);
-
 fn main() {
     dotenv().ok();
 
@@ -24,7 +23,7 @@ fn main() {
             if !is_custom {
                 ensure_aoc_input_exists(day);
             }
-            let (part1, part2, duration) = run_day(day, &filepath);
+            let (part1, part2, duration) = run_day(2024, day, &filepath);
             println!("Day {day}:");
             println!("  part1: {:width$}  part2: {}", part1, part2, width=18);
             println!("  took - {:.2?}", duration);
@@ -55,9 +54,9 @@ fn run_all_days() {
     };
 
     for (day, (expected_part1, expected_part2)) in expected::SOLUTIONS.iter().copied() {
-        ensure_aoc_input_exists(day);
+        ensure_aoc_input_exists(day); // maybe extract this into a module that handles load instead of spamming the website 
         println!("Running day {day}:");
-        let (part1, part2, duration) = run_day(day, &aoc_file_path(day));
+        let (part1, part2, duration) = run_day(2024, day, &aoc_file_path(day));
         let part1_correct = part1 == *expected_part1;
         let part2_correct = part2 == *expected_part2;
         pretty_print(Some((part1, part1_correct)), Some((part2, part2_correct)));
@@ -71,37 +70,9 @@ fn run_all_days() {
     }
 }
 
-fn run_day(day: u32, input_file_path: &str) -> (String, String, Duration) {
-    match day {
-        1 => run(input_file_path, solutions::run_day01),
-        2 => run(input_file_path, solutions::run_day02),
-        3 => run(input_file_path, solutions::run_day03),
-        4 => run(input_file_path, solutions::run_day04),
-        5 => run(input_file_path, solutions::run_day05),
-        6 => run(input_file_path, solutions::run_day06),
-        7 => run(input_file_path, solutions::run_day07),
-        8 => run(input_file_path, solutions::run_day08),
-        9 => run(input_file_path, solutions::run_day09),
-        10 => run(input_file_path, solutions::run_day10),
-        11 => run(input_file_path, solutions::run_day11),
-        12 => run(input_file_path, solutions::run_day12),
-        13 => run(input_file_path, solutions::run_day13),
-        14 => run(input_file_path, solutions::run_day14),
-        15 => run(input_file_path, solutions::run_day15),
-        16 => run(input_file_path, solutions::run_day16),
-        17 => run(input_file_path, solutions::run_day17),
-        18 => run(input_file_path, solutions::run_day18),
-        19 => run(input_file_path, solutions::run_day19),
-        20 => run(input_file_path, solutions::run_day20),
-        22 => run(input_file_path, solutions::run_day22),
-        23 => run(input_file_path, solutions::run_day23),
-        24 => run(input_file_path, solutions::run_day24),
-        25 => run(input_file_path, solutions::run_day25),
-        _ => panic!("Having a bad day: {day}")
-    }
-}
-
-fn run<T: std::fmt::Display, V: std::fmt::Display>(input_file_path: &str, runnable: SolutionFunction<T, V>) -> (String, String, Duration) {
+fn run_day(year: u32, day: u32, input_file_path: &str) -> (String, String, Duration) {
+    let runnable = get_solution_function(year, day);
+    
     let start = Instant::now();
     let (t_part1, t_part2) = runnable(input_file_path);
     let elapsed = start.elapsed();

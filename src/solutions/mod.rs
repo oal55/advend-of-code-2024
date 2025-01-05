@@ -1,49 +1,74 @@
-mod day01;
-mod day02;
-mod day03;
-mod day04;
-mod day05;
-mod day06;
-mod day07;
-mod day08;
-mod day09;
-mod day10;
-mod day11;
-mod day12;
-mod day13;
-mod day14;
-mod day15;
-mod day16;
-mod day17;
-mod day18;
-mod day19;
-mod day20;
-mod day22;
-mod day23;
-mod day24;
-mod day25;
+mod y2024;
 
-pub use self::day01::run as run_day01;
-pub use self::day02::run as run_day02;
-pub use self::day03::run as run_day03;
-pub use self::day04::run as run_day04;
-pub use self::day05::run as run_day05;
-pub use self::day06::run as run_day06;
-pub use self::day07::run as run_day07;
-pub use self::day08::run as run_day08;
-pub use self::day09::run as run_day09;
-pub use self::day10::run as run_day10;
-pub use self::day11::run as run_day11;
-pub use self::day12::run as run_day12;
-pub use self::day13::run as run_day13;
-pub use self::day14::run as run_day14;
-pub use self::day15::run as run_day15;
-pub use self::day16::run as run_day16;
-pub use self::day17::run as run_day17;
-pub use self::day18::run as run_day18;
-pub use self::day19::run as run_day19;
-pub use self::day20::run as run_day20;
-pub use self::day22::run as run_day22;
-pub use self::day23::run as run_day23;
-pub use self::day24::run as run_day24;
-pub use self::day25::run as run_day25;
+use y2024::day01 as run_2024_day_01;
+use y2024::day02 as run_2024_day_02;
+use y2024::day03 as run_2024_day_03;
+use y2024::day04 as run_2024_day_04;
+use y2024::day05 as run_2024_day_05;
+use y2024::day06 as run_2024_day_06;
+use y2024::day07 as run_2024_day_07;
+use y2024::day08 as run_2024_day_08;
+use y2024::day09 as run_2024_day_09;
+use y2024::day10 as run_2024_day_10;
+use y2024::day11 as run_2024_day_11;
+use y2024::day12 as run_2024_day_12;
+use y2024::day13 as run_2024_day_13;
+use y2024::day14 as run_2024_day_14;
+use y2024::day15 as run_2024_day_15;
+use y2024::day16 as run_2024_day_16;
+use y2024::day17 as run_2024_day_17;
+use y2024::day18 as run_2024_day_18;
+use y2024::day19 as run_2024_day_19;
+use y2024::day20 as run_2024_day_20;
+use y2024::day22 as run_2024_day_22;
+use y2024::day23 as run_2024_day_23;
+use y2024::day24 as run_2024_day_24;
+use y2024::day25 as run_2024_day_25;
+
+
+type SolutionFunction<T, V> = fn(filename: &str) -> (T, V);
+type DisplayFunction = Box<dyn Fn(&str) -> (String, String)>;
+
+pub fn get_solution_function(year: u32, day: u32) -> DisplayFunction {
+    match year {
+        2024 => match day {
+            1 => wrap(run_2024_day_01),
+            2 => wrap(run_2024_day_02),
+            3 => wrap(run_2024_day_03),
+            4 => wrap(run_2024_day_04),
+            5 => wrap(run_2024_day_05),
+            6 => wrap(run_2024_day_06),
+            7 => wrap(run_2024_day_07),
+            8 => wrap(run_2024_day_08),
+            9 => wrap(run_2024_day_09),
+            10 => wrap(run_2024_day_10),
+            11 => wrap(run_2024_day_11),
+            12 => wrap(run_2024_day_12),
+            13 => wrap(run_2024_day_13),
+            14 => wrap(run_2024_day_14),
+            15 => wrap(run_2024_day_15),
+            16 => wrap(run_2024_day_16),
+            17 => wrap(run_2024_day_17),
+            18 => wrap(run_2024_day_18),
+            19 => wrap(run_2024_day_19),
+            20 => wrap(run_2024_day_20),
+            22 => wrap(run_2024_day_22),
+            23 => wrap(run_2024_day_23),
+            24 => wrap(run_2024_day_24),
+            25 => wrap(run_2024_day_25),
+           _ => panic!("Bad year")
+        },
+        _ => panic!("Bad year")
+    }
+}
+
+fn wrap<T, V>(f: SolutionFunction<T, V>) -> DisplayFunction
+where
+    T: std::fmt::Display + 'static,
+    V: std::fmt::Display + 'static,
+{
+    Box::new(move | filepath: &str | -> (String, String) {
+        let (t, v) = f(filepath);
+        (t.to_string(), v.to_string())
+    })
+}
